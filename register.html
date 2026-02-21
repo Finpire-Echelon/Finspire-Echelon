@@ -342,7 +342,7 @@ async function submitFinalRegistration(){
 }
 
 function showSuccess(ids){
-  document.querySelector(".container").innerHTML = `<div style="text-align:center; padding:30px;"><i class="fas fa-check-circle" style="font-size:3rem; color:var(--gold); margin-bottom:15px;"></i><h2 style="color:var(--gold); font-family:'Cinzel'; font-size:1.2rem;">Registration Sent!</h2><p style="font-size:0.85rem; margin-bottom:10px;">Check email in 24-48 hours.</p><p style="font-size:0.85rem;">Temp IDs: ${ids.join(', ')}</p></div>`;
+  document.querySelector(".container").innerHTML = `<div style="text-align:center; padding:30px;"><i class="fas fa-check-circle" style="font-size:3rem; color:var(--gold); margin-bottom:15px;"></i><h2 style="color:var(--gold); font-family:'Cinzel'; font-size:1.2rem;">Registration Sent!</h2><p style="font-size:0.85rem; margin-bottom:10px;">YOUR SEATS WILL BE CONFIRMED IN 24-48 HOURS</p><p style="font-size:0.85rem;">Temp IDs: ${ids.join(', ')}</p></div>`;
 }
 
 function nextStep(step){ document.querySelectorAll(".step").forEach(s=>s.classList.remove("active")); document.getElementById("step"+step).classList.add("active"); updateProgress(step); window.scrollTo({top: 0, behavior: 'smooth'}); }
@@ -354,6 +354,7 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 </script>
 </body>
 </html>
+
 
 
 
