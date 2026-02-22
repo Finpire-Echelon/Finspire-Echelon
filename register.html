@@ -172,24 +172,30 @@ button:hover { background: var(--gold-grad); color: var(--maroon); }
 </div>
 
 <div id="helpModal" class="modal">
-  <div class="modal-section-title">Step-by-Step Registration Process</div>
-<ul class="modal-list">
-    <li><strong>1. Personal Details:</strong> Fill in your Name, Department, and Institution accurately. Ensure your email is correct as confirmation will be sent there.</li>
-    <li><strong>2. Select Events:</strong> Choose the events you wish to participate in. Note that some events occur on the same day, so check the schedule to avoid conflicts.</li>
-    <li><strong>3. Team Information:</strong> For team-based events, provide the names and valid contact numbers of all members. The person registering will be considered the "Team Lead."</li>
-    <li><strong>4. Application Submission:</strong> Once you click "Register," your details are sent to our Command Center for review. You will receive an initial email stating your application is "PENDING."</li>
-    <li><strong>5. Verification:</strong> The organizing committee will verify your details against institutional records. This process typically takes 24–48 hours.</li>
-    <li><strong>6. Confirmation:</strong> Upon successful verification, you will receive a final confirmation email with your unique <strong>Registration ID</strong> and a link to join the official Event WhatsApp Group.</li>
-    <li><strong>7. Entry Requirements:</strong> On the day of the event, carry your valid College ID card and show the confirmation email at the reporting desk 30 minutes before your scheduled time.</li>
-</ul>
+  <div class="modal-content" style="max-width: 600px; border: 2px solid var(--gold); background: var(--maroon);">
+    <span class="close-modal" onclick="closeHelp()">×</span>
+    
+    <h2 style="font-family:'Cinzel'; color:var(--gold); border-bottom:1px solid var(--gold); padding-bottom:10px; margin-bottom:20px; font-size: 1.3rem; text-align:center;">REGISTRATION GUIDE</h2>
+    
+    <div class="modal-section-title" style="color:var(--gold); font-family:'Cinzel'; font-size:0.9rem; margin-bottom:10px;">Step-by-Step Process</div>
+    <ul class="modal-list" style="color:var(--cream); font-size:0.85rem; line-height:1.6; margin-bottom:20px; list-style:none; padding:0;">
+      <li style="margin-bottom:10px;"><strong>1. Personal Details:</strong> Fill in Name, Dept, and Institution. Confirmation goes to your email.</li>
+      <li style="margin-bottom:10px;"><strong>2. Select Events:</strong> Choose your competitions. Check for time conflicts!</li>
+      <li style="margin-bottom:10px;"><strong>3. Team Info:</strong> Provide names & 10-digit phone numbers for all members.</li>
+      <li style="margin-bottom:10px;"><strong>4. Submission:</strong> Click "Register" to send data. Initial status will be <strong>PENDING</strong>.</li>
+      <li style="margin-bottom:10px;"><strong>5. Verification:</strong> We verify details with your institution (takes 24–48 hours).</li>
+      <li style="margin-bottom:10px;"><strong>6. Confirmation:</strong> You'll get a final email with your <strong>Reg ID</strong> and WhatsApp link.</li>
+      <li style="margin-bottom:10px;"><strong>7. Entry:</strong> Bring your College ID and confirmation email to the desk.</li>
+    </ul>
 
-<div class="modal-section-title">Important Notes</div>
-<ul class="modal-list">
-    <li>Registration is <strong>mandatory</strong> for all participants; on-spot registrations are strictly prohibited.</li>
-    <li>Ensure all team members' data is final before submission, as changes cannot be made post-registration.</li>
-    <li>Decision of the organizing committee regarding application approval is final and binding.</li>
-</ul>
-    <button onclick="closeHelp()" style="width:100%; background:var(--gold-grad); color:var(--maroon); padding:10px; font-family:'Cinzel'; border-radius:5px;">GOT IT, VRO!</button>
+    <div class="modal-section-title" style="color:var(--gold); font-family:'Cinzel'; font-size:0.9rem; margin-bottom:10px;">Important Notes</div>
+    <ul class="modal-list" style="color:var(--cream); font-size:0.85rem; line-height:1.6; margin-bottom:20px; list-style:none; padding:0;">
+      <li style="margin-bottom:5px;">• Registration is <strong>mandatory</strong>; no on-spot entries.</li>
+      <li style="margin-bottom:5px;">• Data cannot be changed after submission.</li>
+      <li style="margin-bottom:5px;">• Committee decisions are final and binding.</li>
+    </ul>
+
+    <button onclick="closeHelp()" style="width:100%; background:var(--gold-grad); color:var(--maroon); padding:12px; font-family:'Cinzel'; font-weight:bold; border:none; border-radius:5px; cursor:pointer;">GOT IT, VRO!</button>
   </div>
 </div>
 
@@ -365,6 +371,7 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 </script>
 </body>
 </html>
+
 
 
 
