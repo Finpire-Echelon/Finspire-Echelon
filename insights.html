@@ -7,24 +7,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root { --gold: #D4AF37; --maroon: #4B0036; --bg: #0f0f0f; --card: #1a1a1a; --text: #f5f1e6; }
+    :root { --gold: #D4AF37; --maroon: #4B0036; --bg: #0f0f0f; --card: #1a1a1a; --text: #f5f1e6; --green: #28a745; --orange: #f57f17; }
     body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; margin: 0; padding-bottom: 50px; }
 
     header { background: var(--maroon); padding: 20px 30px; border-bottom: 3px solid var(--gold); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
     h1 { font-family: 'Cinzel'; color: var(--gold); margin: 0; font-size: 1.5rem; letter-spacing: 2px; }
 
     .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-    
-    /* Stats Grid */
     .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px; }
     .insight-card { background: var(--card); border-radius: 15px; border: 1px solid #333; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
     .card-title { font-family: 'Cinzel'; color: var(--gold); font-size: 0.9rem; margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 10px; display: flex; justify-content: space-between; }
 
-    .chart-container { position: relative; height: 300px; width: 100%; }
+    .chart-container { position: relative; height: 280px; width: 100%; }
 
-    /* Leaderboard Style */
-    .leaderboard-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #222; font-size: 0.85rem; }
-    .rank-circle { width: 24px; height: 24px; background: var(--gold); color: var(--maroon); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 10px; font-size: 0.7rem; }
+    /* Funnel Style */
+    .conversion-item { margin-bottom: 18px; }
+    .label-row { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 6px; }
+    .progress-bar { height: 6px; background: #000; border-radius: 3px; overflow: hidden; display: flex; }
+    .applied-fill { height: 100%; background: var(--orange); }
+    .confirmed-fill { height: 100%; background: var(--green); }
 
     .btn-gold { background: var(--gold); color: var(--maroon); border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: 'Cinzel'; text-decoration: none; font-size: 0.8rem; }
     
@@ -37,42 +38,40 @@
 
   <div id="loading-overlay">
     <div class="loader"></div>
-    <p style="margin-top: 20px; font-family: 'Cinzel'; color: var(--gold);">Analyzing Data Hub...</p>
+    <p style="margin-top: 20px; font-family: 'Cinzel'; color: var(--gold);">Compiling Analytics...</p>
   </div>
 
   <header>
     <h1>INSIGHT CENTER</h1>
-    <a href="admin.html" class="btn-gold">COMMAND CENTER</a>
+    <a href="admin.html" class="btn-gold">OPERATIONS</a>
   </header>
 
   <div class="container">
     <div class="insights-grid">
       
+      <div class="insight-card" style="grid-column: span 2;">
+        <div class="card-title">Live Pipeline <span>Applied (A) vs Confirmed (C)</span></div>
+        <div id="conversionContainer"></div>
+      </div>
+
       <div class="insight-card">
-        <div class="card-title">Registration Mix <span>By Event</span></div>
+        <div class="card-title">Day-wise Split <span>Engagement Share</span></div>
         <div class="chart-container">
-          <canvas id="eventPieChart"></canvas>
+          <canvas id="dayPieChart"></canvas>
         </div>
       </div>
 
       <div class="insight-card">
-        <div class="card-title">Growth Velocity <span>Daily Trend</span></div>
+        <div class="card-title">Daily Velocity <span>Traffic Trend</span></div>
         <div class="chart-container">
           <canvas id="velocityLineChart"></canvas>
         </div>
       </div>
 
-      <div class="insight-card" style="grid-row: span 2;">
-        <div class="card-title">Top Institutions <span>By Volume</span></div>
-        <div id="institutionLeaderboard">
-          <p style="text-align:center; color:#555; margin-top:50px;">Processing college data...</p>
-        </div>
-      </div>
-
       <div class="insight-card">
-        <div class="card-title">Process Efficiency <span>Approval Status</span></div>
+        <div class="card-title">Top Institutions <span>Leaderboard</span></div>
         <div class="chart-container">
-          <canvas id="statusDoughnutChart"></canvas>
+          <canvas id="collegePieChart"></canvas>
         </div>
       </div>
 
@@ -80,7 +79,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwjAI96cSTzwgUtYddm7lTO7dgyDzPm9_T9OQPqQpkafxQe-3rz3NqCE45kFRvuUxja/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNLHaB76Of5tctCIH4LUyeOsfP2T5nwuBJ87t2gbbwPPLJvP_5A0hkWr4Pzlsq_KU_/exec";
     const SECRET_KEY = "ECHELON_SUPER_SECRET_2026";
 
     window.onload = loadInsightData;
@@ -89,113 +88,105 @@
       try {
         const response = await fetch(`${SCRIPT_URL}?action=getAdminData&key=${SECRET_KEY}`);
         const data = await response.json();
-        const rows = data.rows;
-        
-        processInsights(rows);
+        processInsights(data.rows);
         document.getElementById('loading-overlay').style.display = 'none';
-      } catch (e) { console.error("Insight Load Error:", e); }
+      } catch (e) { console.error(e); }
     }
 
     function processInsights(rows) {
-      const eventCounts = {};
-      const dateCounts = {};
-      const statusCounts = { "APPROVED": 0, "PENDING": 0, "REJECTED": 0 };
-      const collegeCounts = {};
+      const eventStats = {}, velocity = {}, colleges = {}, dayStats = { "March 10": 0, "March 11": 0 };
 
       for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
-        
-        // 1. Event Data
+        const day = r[2].replace(/'/g, "").trim(); // Clean date string
         const event = r[3];
-        eventCounts[event] = (eventCounts[event] || 0) + 1;
-
-        // 2. Growth Velocity (Daily)
-        const rawDate = r[0].split(' ')[0]; // Extract DD/MM/YYYY
-        dateCounts[rawDate] = (dateCounts[rawDate] || 0) + 1;
-
-        // 3. Status Data
         const status = r[13] || "PENDING";
-        statusCounts[status]++;
-
-        // 4. College Leaderboard
+        const subDate = r[0].split(' ')[0];
         const college = r[5];
-        collegeCounts[college] = (collegeCounts[college] || 0) + 1;
+
+        // 1. Funnel
+        if(!eventStats[event]) eventStats[event] = { applied: 0, confirmed: 0 };
+        eventStats[event].applied++;
+        if(status === "APPROVED") eventStats[event].confirmed++;
+
+        // 2. Day Split
+        if(day.includes("10")) dayStats["March 10"]++;
+        else if(day.includes("11")) dayStats["March 11"]++;
+
+        // 3. Velocity & Colleges
+        velocity[subDate] = (velocity[subDate] || 0) + 1;
+        colleges[college] = (colleges[college] || 0) + 1;
       }
 
-      renderPie(eventCounts);
-      renderVelocity(dateCounts);
-      renderStatus(statusCounts);
-      renderLeaderboard(collegeCounts);
+      renderFunnel(eventStats);
+      renderVelocity(velocity);
+      renderColleges(colleges);
+      renderDaySplit(dayStats);
     }
 
-    function renderPie(counts) {
-      new Chart(document.getElementById('eventPieChart'), {
-        type: 'pie',
+    function renderDaySplit(data) {
+      new Chart(document.getElementById('dayPieChart'), {
+        type: 'doughnut',
         data: {
-          labels: Object.keys(counts),
+          labels: ['March 10', 'March 11'],
           datasets: [{
-            data: Object.values(counts),
-            backgroundColor: ['#D4AF37', '#4B0036', '#630048', '#00A878', '#2D0021', '#F5F1E6'],
+            data: [data["March 10"], data["March 11"]],
+            backgroundColor: ['#D4AF37', '#4B0036'],
             borderWidth: 0
           }]
         },
-        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#f5f1e6', font: { size: 10 } } } } }
+        options: { cutout: '65%', maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#888' } } } }
       });
     }
 
-    function renderVelocity(counts) {
-      // Sort dates
-      const labels = Object.keys(counts).sort();
+    function renderFunnel(stats) {
+      const container = document.getElementById('conversionContainer');
+      container.innerHTML = Object.entries(stats).map(([name, data]) => {
+        const confPct = (data.confirmed / data.applied) * 100;
+        const appPct = 100 - confPct;
+        return `
+          <div class="conversion-item">
+            <div class="label-row"><strong>${name}</strong><span>${data.confirmed}C / ${data.applied}A</span></div>
+            <div class="progress-bar">
+              <div class="confirmed-fill" style="width: ${confPct}%"></div>
+              <div class="applied-fill" style="width: ${appPct}%"></div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function renderVelocity(data) {
+      const labels = Object.keys(data).sort();
       new Chart(document.getElementById('velocityLineChart'), {
         type: 'line',
         data: {
           labels: labels,
           datasets: [{
-            label: 'New Registrations',
-            data: labels.map(l => counts[l]),
+            data: labels.map(l => data[l]),
             borderColor: '#D4AF37',
-            tension: 0.4,
+            backgroundColor: 'rgba(212, 175, 55, 0.1)',
             fill: true,
-            backgroundColor: 'rgba(212, 175, 55, 0.1)'
+            tension: 0.3
           }]
         },
-        options: { 
-          maintainAspectRatio: false, 
-          scales: { 
-            y: { grid: { color: '#222' }, ticks: { color: '#888' } },
-            x: { grid: { display: false }, ticks: { color: '#888' } }
-          },
-          plugins: { legend: { display: false } }
-        }
+        options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { grid: { color: '#222' }, ticks: { color: '#888' } } } }
       });
     }
 
-    function renderStatus(counts) {
-      new Chart(document.getElementById('statusDoughnutChart'), {
-        type: 'doughnut',
+    function renderColleges(data) {
+      const sorted = Object.entries(data).sort((a,b) => b[1]-a[1]).slice(0, 5);
+      new Chart(document.getElementById('collegePieChart'), {
+        type: 'pie',
         data: {
-          labels: ['Approved', 'Pending', 'Rejected'],
+          labels: sorted.map(s => s[0]),
           datasets: [{
-            data: [counts.APPROVED, counts.PENDING, counts.REJECTED],
-            backgroundColor: ['#1b5e20', '#f57f17', '#b71c1c'],
-            hoverOffset: 10,
+            data: sorted.map(s => s[1]),
+            backgroundColor: ['#D4AF37', '#4B0036', '#630048', '#8E0067', '#2D0021'],
             borderWidth: 0
           }]
         },
-        options: { cutout: '70%', maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#888' } } } }
+        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#888', font: { size: 10 } } } } }
       });
-    }
-
-    function renderLeaderboard(counts) {
-      const container = document.getElementById('institutionLeaderboard');
-      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
-      
-      container.innerHTML = sorted.map((item, idx) => `
-        <div class="leaderboard-item">
-          <span><span class="rank-circle">${idx+1}</span> ${item[0]}</span>
-          <span style="color:var(--gold); font-weight:bold;">${item[1]}</span>
-        </div>
-      `).join('');
     }
   </script>
 </body>
