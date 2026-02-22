@@ -172,12 +172,23 @@ button:hover { background: var(--gold-grad); color: var(--maroon); }
 </div>
 
 <div id="helpModal" class="modal">
-  <div class="modal-content">
-    <span class="close-modal" onclick="closeHelp()">×</span>
-    <h2 style="font-family:'Cinzel'; color:var(--gold); margin-bottom:15px; border-bottom:1px solid var(--gold); padding-bottom:10px; font-size: 1.1rem;">GUIDE</h2>
-    <div class="help-step" style="font-size: 0.85rem; margin-bottom: 15px;"><strong>STEP 1</strong><p>Select dates & choose competition.</p></div>
-    <div class="help-step" style="font-size: 0.85rem; margin-bottom: 15px;"><strong>STEP 2</strong><p>P1 is the lead. Use exactly 10-digit phone numbers.</p></div>
-    <div class="help-step" style="font-size: 0.85rem; margin-bottom: 15px;"><strong>STEP 3</strong><p>Verify all details and submit. Confirmation takes 24-48 hours.</p></div>
+  <div class="modal-section-title">Step-by-Step Registration Process</div>
+<ul class="modal-list">
+    <li><strong>1. Personal Details:</strong> Fill in your Name, Department, and Institution accurately. Ensure your email is correct as confirmation will be sent there.</li>
+    <li><strong>2. Select Events:</strong> Choose the events you wish to participate in. Note that some events occur on the same day, so check the schedule to avoid conflicts.</li>
+    <li><strong>3. Team Information:</strong> For team-based events, provide the names and valid contact numbers of all members. The person registering will be considered the "Team Lead."</li>
+    <li><strong>4. Application Submission:</strong> Once you click "Register," your details are sent to our Command Center for review. You will receive an initial email stating your application is "PENDING."</li>
+    <li><strong>5. Verification:</strong> The organizing committee will verify your details against institutional records. This process typically takes 24–48 hours.</li>
+    <li><strong>6. Confirmation:</strong> Upon successful verification, you will receive a final confirmation email with your unique <strong>Registration ID</strong> and a link to join the official Event WhatsApp Group.</li>
+    <li><strong>7. Entry Requirements:</strong> On the day of the event, carry your valid College ID card and show the confirmation email at the reporting desk 30 minutes before your scheduled time.</li>
+</ul>
+
+<div class="modal-section-title">Important Notes</div>
+<ul class="modal-list">
+    <li>Registration is <strong>mandatory</strong> for all participants; on-spot registrations are strictly prohibited.</li>
+    <li>Ensure all team members' data is final before submission, as changes cannot be made post-registration.</li>
+    <li>Decision of the organizing committee regarding application approval is final and binding.</li>
+</ul>
     <button onclick="closeHelp()" style="width:100%; background:var(--gold-grad); color:var(--maroon); padding:10px; font-family:'Cinzel'; border-radius:5px;">GOT IT, VRO!</button>
   </div>
 </div>
@@ -354,6 +365,7 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 </script>
 </body>
 </html>
+
 
 
 
