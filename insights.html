@@ -8,61 +8,72 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root { --gold: #D4AF37; --maroon: #4B0036; --bg: #0f0f0f; --card: #1a1a1a; --text: #f5f1e6; --green: #28a745; --orange: #f57f17; }
-    body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; margin: 0; padding-bottom: 50px; }
+    body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; margin: 0; padding-bottom: 50px; overflow-x: hidden; }
 
-    header { background: var(--maroon); padding: 20px 30px; border-bottom: 3px solid var(--gold); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-    h1 { font-family: 'Cinzel'; color: var(--gold); margin: 0; font-size: 1.5rem; letter-spacing: 2px; }
+    header { background: var(--maroon); padding: 15px 20px; border-bottom: 3px solid var(--gold); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+    h1 { font-family: 'Cinzel'; color: var(--gold); margin: 0; font-size: clamp(1rem, 4vw, 1.5rem); letter-spacing: 2px; }
 
-    .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-    .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 40px; }
-    .insight-card { background: var(--card); border-radius: 15px; border: 1px solid #333; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .card-title { font-family: 'Cinzel'; color: var(--gold); font-size: 0.9rem; margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 10px; display: flex; justify-content: space-between; }
+    .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
+    .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    
+    .insight-card { background: var(--card); border-radius: 12px; border: 1px solid #333; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .card-title { font-family: 'Cinzel'; color: var(--gold); font-size: 0.85rem; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .card-title span { font-size: 0.65rem; opacity: 0.7; font-family: 'Montserrat'; }
 
-    .chart-container { position: relative; height: 280px; width: 100%; }
+    .chart-container { position: relative; height: 250px; width: 100%; }
 
-    /* Funnel Style */
-    .conversion-item { margin-bottom: 18px; }
-    .label-row { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 6px; }
+    /* Conversion Bar Styles */
+    .conversion-item { margin-bottom: 15px; }
+    .label-row { display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 5px; }
     .progress-bar { height: 6px; background: #000; border-radius: 3px; overflow: hidden; display: flex; }
     .applied-fill { height: 100%; background: var(--orange); }
     .confirmed-fill { height: 100%; background: var(--green); }
 
-    .btn-gold { background: var(--gold); color: var(--maroon); border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: 'Cinzel'; text-decoration: none; font-size: 0.8rem; }
+    .btn-exit { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: 'Cinzel'; text-decoration: none; font-size: 0.7rem; transition: 0.3s; }
+    .btn-exit:hover { background: var(--gold); color: var(--maroon); }
     
-    #loading-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .loader { width: 50px; height: 50px; border: 5px solid #222; border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
+    #loading-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+    .loader { width: 45px; height: 45px; border: 4px solid #222; border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Mobile Adjustments */
+    @media (max-width: 600px) {
+      .insights-grid { grid-template-columns: 1fr; }
+      .insight-card { padding: 15px; }
+      .chart-container { height: 220px; }
+      h1 { letter-spacing: 1px; }
+    }
   </style>
 </head>
 <body>
 
   <div id="loading-overlay">
     <div class="loader"></div>
-    <p style="margin-top: 20px; font-family: 'Cinzel'; color: var(--gold);">Compiling Analytics...</p>
+    <p id="loadText" style="margin-top: 20px; font-family: 'Cinzel'; color: var(--gold); font-size: 0.9rem;">Securing Connection...</p>
   </div>
 
   <header>
     <h1>INSIGHT CENTER</h1>
-    <a href="admin.html" class="btn-gold">OPERATIONS</a>
+    <a href="admin.html" class="btn-exit" onclick="sessionStorage.clear()">BACK TO OPS</a>
   </header>
 
   <div class="container">
     <div class="insights-grid">
       
-      <div class="insight-card" style="grid-column: span 2;">
-        <div class="card-title">Live Pipeline <span>Applied (A) vs Confirmed (C)</span></div>
+      <div class="insight-card" style="grid-column: span 1;">
+        <div class="card-title">Event Pipeline <span>Applied vs Confirmed</span></div>
         <div id="conversionContainer"></div>
       </div>
 
       <div class="insight-card">
-        <div class="card-title">Day-wise Split <span>Engagement Share</span></div>
+        <div class="card-title">Schedule Balance <span>Day Engagement</span></div>
         <div class="chart-container">
           <canvas id="dayPieChart"></canvas>
         </div>
       </div>
 
       <div class="insight-card">
-        <div class="card-title">Daily Velocity <span>Traffic Trend</span></div>
+        <div class="card-title">Daily Velocity <span>Registration Trend</span></div>
         <div class="chart-container">
           <canvas id="velocityLineChart"></canvas>
         </div>
@@ -80,29 +91,55 @@
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNLHaB76Of5tctCIH4LUyeOsfP2T5nwuBJ87t2gbbwPPLJvP_5A0hkWr4Pzlsq_KU_/exec";
-    const SECRET_KEY = "ECHELON_SUPER_SECRET_2026";
+    
+    // AUTHENTICATION CHECK
+    // This looks for the adminId stored during the admin.html login session
+    const activeAdminId = sessionStorage.getItem('echelonAdminId');
 
-    window.onload = loadInsightData;
+    window.onload = async function() {
+      if (!activeAdminId) {
+        document.getElementById('loadText').innerHTML = "ACCESS DENIED<br><span style='font-size:0.7rem; font-family:Montserrat;'>Please login via Command Center</span>";
+        document.querySelector('.loader').style.display = 'none';
+        setTimeout(() => window.location.href = 'admin.html', 2000);
+        return;
+      }
+      
+      loadInsightData();
+    };
 
     async function loadInsightData() {
       try {
-        const response = await fetch(`${SCRIPT_URL}?action=getAdminData&key=${SECRET_KEY}`);
+        const response = await fetch(`${SCRIPT_URL}?action=getAdminData&key=${activeAdminId}`);
         const data = await response.json();
+        
+        if (data === "UNAUTHORIZED") {
+          document.getElementById('loadText').innerText = "INVALID SESSION";
+          window.location.href = 'admin.html';
+          return;
+        }
+
         processInsights(data.rows);
         document.getElementById('loading-overlay').style.display = 'none';
-      } catch (e) { console.error(e); }
+      } catch (e) { 
+        console.error(e);
+        document.getElementById('loadText').innerText = "SERVER TIMEOUT - RETRYING...";
+        setTimeout(loadInsightData, 3000);
+      }
     }
 
     function processInsights(rows) {
       const eventStats = {}, velocity = {}, colleges = {}, dayStats = { "March 10": 0, "March 11": 0 };
 
+      // Start from i=1 to skip headers
       for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
-        const day = r[2].replace(/'/g, "").trim(); // Clean date string
+        if (!r[0] || !r[3]) continue; // Skip broken rows
+
+        const day = (r[2] || "").replace(/'/g, "").trim();
         const event = r[3];
-        const status = r[13] || "PENDING";
+        const status = String(r[13] || "PENDING").toUpperCase();
         const subDate = r[0].split(' ')[0];
-        const college = r[5];
+        const college = r[5] || "Unknown Institution";
 
         // 1. Funnel
         if(!eventStats[event]) eventStats[event] = { applied: 0, confirmed: 0 };
@@ -135,21 +172,22 @@
             borderWidth: 0
           }]
         },
-        options: { cutout: '65%', maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#888' } } } }
+        options: { cutout: '70%', maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#888', font: { size: 10 } } } } }
       });
     }
 
     function renderFunnel(stats) {
       const container = document.getElementById('conversionContainer');
-      container.innerHTML = Object.entries(stats).map(([name, data]) => {
+      const sorted = Object.entries(stats).sort((a,b) => b[1].applied - a[1].applied);
+      
+      container.innerHTML = sorted.map(([name, data]) => {
         const confPct = (data.confirmed / data.applied) * 100;
-        const appPct = 100 - confPct;
         return `
           <div class="conversion-item">
             <div class="label-row"><strong>${name}</strong><span>${data.confirmed}C / ${data.applied}A</span></div>
             <div class="progress-bar">
               <div class="confirmed-fill" style="width: ${confPct}%"></div>
-              <div class="applied-fill" style="width: ${appPct}%"></div>
+              <div class="applied-fill" style="width: ${100 - confPct}%"></div>
             </div>
           </div>`;
       }).join('');
@@ -166,10 +204,18 @@
             borderColor: '#D4AF37',
             backgroundColor: 'rgba(212, 175, 55, 0.1)',
             fill: true,
-            tension: 0.3
+            tension: 0.4,
+            pointRadius: 2
           }]
         },
-        options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { grid: { color: '#222' }, ticks: { color: '#888' } } } }
+        options: { 
+          maintainAspectRatio: false, 
+          plugins: { legend: { display: false } }, 
+          scales: { 
+            x: { grid: { display: false }, ticks: { color: '#666', font: { size: 9 } } }, 
+            y: { grid: { color: '#222' }, ticks: { color: '#666', font: { size: 9 } } } 
+          } 
+        }
       });
     }
 
@@ -178,14 +224,14 @@
       new Chart(document.getElementById('collegePieChart'), {
         type: 'pie',
         data: {
-          labels: sorted.map(s => s[0]),
+          labels: sorted.map(s => s[0].length > 15 ? s[0].substring(0,15)+'...' : s[0]),
           datasets: [{
             data: sorted.map(s => s[1]),
             backgroundColor: ['#D4AF37', '#4B0036', '#630048', '#8E0067', '#2D0021'],
             borderWidth: 0
           }]
         },
-        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#888', font: { size: 10 } } } } }
+        options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#888', font: { size: 9 }, boxWidth: 10 } } } }
       });
     }
   </script>
