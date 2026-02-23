@@ -199,37 +199,49 @@
     let adminId = "", adminName = "", mode = "", fullData = [], eventConfig = {}, activeFilters = {};
     let currentDrillEvent = "", currentDrillTab = "PENDING";
 
-    async function checkLogin() {
-      const btn = document.getElementById('authBtn');
-      const pass = document.getElementById('adminPass').value.trim();
-      if (!pass) return;
+   async function checkLogin() {
+  const btn = document.getElementById('authBtn');
+  const pass = document.getElementById('adminPass').value.trim();
+  if (!pass) return;
 
-      btn.classList.add('btn-loading');
-      adminId = pass;
-      mode = window.innerWidth < 768 ? "Mobile" : "Laptop/PC";
+  // Visual feedback and locking
+  btn.classList.add('btn-loading');
+  adminId = pass;
+  mode = window.innerWidth < 768 ? "Mobile" : "Laptop/PC";
 
-      try {
-        const response = await fetch(`${SCRIPT_URL}?action=getAdminData&key=${adminId}`);
-        const data = await response.json();
-        
-        if (data === "UNAUTHORIZED") {
-          btn.classList.remove('btn-loading');
-          openModal("Access Denied", "Invalid Admin ID entered. Please try again.");
-          return;
-        }
+  // SAVE THE SESSION for insights.html to access
+  sessionStorage.setItem('echelonAdminId', adminId);
 
-        adminName = data.adminName;
-        setupPresence();
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('admin-content').style.display = 'block';
-        fullData = data.rows; eventConfig = data.config; 
-        renderAll();
-        updateActivityLog("authorized session");
-      } catch (e) { 
-        btn.classList.remove('btn-loading');
-        console.error(e); 
-      }
+  try {
+    const response = await fetch(`${SCRIPT_URL}?action=getAdminData&key=${adminId}`);
+    const data = await response.json();
+    
+    if (data === "UNAUTHORIZED") {
+      btn.classList.remove('btn-loading');
+      sessionStorage.removeItem('echelonAdminId'); // Clear failed attempt
+      openModal("Access Denied", "Invalid Admin ID entered. Please try again.");
+      return;
     }
+
+    adminName = data.adminName;
+    setupPresence();
+    
+    // UI Transitions
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    
+    // Data Loading
+    fullData = data.rows; 
+    eventConfig = data.config; 
+    renderAll();
+    
+    updateActivityLog("authorized session");
+  } catch (e) { 
+    btn.classList.remove('btn-loading');
+    console.error("Login Error:", e);
+    openModal("Connection Error", "Failed to reach the Command Center. Check your internet.");
+  }
+}
 
     function setupPresence() {
       const circle = document.getElementById('adminCircle');
@@ -445,4 +457,5 @@
   </script>
 </body>
 </html>
+
 
