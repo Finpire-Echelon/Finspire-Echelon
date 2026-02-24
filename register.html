@@ -69,6 +69,34 @@ h2 { font-family: 'Cinzel', serif; color: var(--gold); font-size: clamp(1rem, 4v
 .input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); }
 input { width: 100%; padding: 12px 12px 12px 45px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3); background: var(--input-bg); color: var(--cream); }
 
+/* --- BANNER	 --- */
+
+.selection-rule-box {
+    background: rgba(212, 175, 55, 0.1);
+    border-left: 4px solid var(--gold);
+    padding: 12px;
+    margin-bottom: 20px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* If any event is selected in a group, dim the others slightly */
+
+#march10Events:has(.selected) .option:not(.selected),
+#march11Events:has(.selected) .option:not(.selected) {
+    opacity: 0.6;
+    filter: saturate(0.5);
+}
+
+.option.selected {
+    opacity: 1 !important;
+    filter: saturate(1) !important;
+    transform: scale(1.02); /* Slight pop effect */
+    border: 2px solid var(--gold);
+}
+
 /* --- SEARCHABLE DROPDOWN CSS --- */
 .dropdown-container { position: relative; width: 100%; }
 .dropdown-list {
@@ -158,15 +186,17 @@ button:disabled { opacity: 0.5; cursor: wait; }
       <div class="btn-container"><button type="button" onclick="goToEvents()">Next Step</button></div>
     </div>
 
-    <div class="step" id="step2">
-      <h2>Select Your Event(s)</h2>
-      <div id="march10Events"></div>
-      <div id="march11Events"></div>
-      <div class="btn-container">
-        <button type="button" onclick="prevStep(1)">Back</button>
-        <button type="button" onclick="goToDetails()">Continue</button>
-      </div>
-    </div>
+   <div class="step" id="step2">
+  <h2>Select Your Event(s)</h2>
+  <div class="events-container">
+    <div id="march10Events"></div>
+    <div id="march11Events"></div>
+  </div>
+  <div class="btn-container">
+    <button type="button" onclick="prevStep(1)">Back</button>
+    <button type="button" onclick="goToDetails()">Continue</button>
+  </div>
+</div>
 
     <div class="step" id="step3">
       <h2>Participant Details</h2>
@@ -207,7 +237,7 @@ button:disabled { opacity: 0.5; cursor: wait; }
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwFHgDO-eMTzFciALWQf2DvjwXJ_s_Lag2x0P1CxYAAZugUHcwG6HCuxP3te9pROQgc/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyYaL9luj2qYqTrPLyuLwsDJqYLW_ugKYFSaBaoFLYnXaGLyoWPa3IlLRON_qEsZv63/exec";
 
 const EVENT_CONFIG = {
   "March 10": { "Make or Break": { capacity: 35 }, "Quizpreneur": { capacity: 50 }, "Behind the Brand": { capacity: 20 } },
@@ -263,38 +293,96 @@ async function goToEvents(){
   finally { btn.innerText = "Next Step"; btn.disabled = false; }
 }
 
+
 function buildEventOptions(liveData){
-  document.getElementById("march10Events").innerHTML="";
-  document.getElementById("march11Events").innerHTML="";
+  // Clear the event containers first
+  document.getElementById("march10Events").innerHTML = "";
+  document.getElementById("march11Events").innerHTML = "";
+  
   selectedDates.forEach(date => {
     let container = document.getElementById(date === "March 10" ? "march10Events" : "march11Events");
-    container.innerHTML += `<h3 style="color:var(--gold); font-family:'Cinzel'; margin: 15px 0 10px; font-size: 0.9rem;">${date}</h3>`;
+    
+    // 1. Set the Initial Header and Rule Box ONCE for the date
+    container.innerHTML = `
+      <div class="selection-rule-box">
+        <i class="fas fa-info-circle"></i>
+        <span>Pick 1 Event Only for ${date}. Selecting a new one replaces the old one.</span>
+      </div>
+      <h3 style="color:var(--gold); font-family:'Cinzel'; margin: 15px 0 10px; font-size: 0.9rem;">${date}</h3>
+    `;
+
     eventData[date].forEach(ev => {
       const stats = liveData?.[date]?.[ev.name];
       const left = EVENT_CONFIG[date][ev.name].capacity - (stats ? stats.approved : 0);
       const isFull = left <= 0;
+      const isSelected = selectedEvents[date]?.name === ev.name;
+      
       const card = document.createElement('div');
       card.className = `option ${isFull ? 'disabled' : ''}`;
-      if(selectedEvents[date]?.name === ev.name) card.classList.add('selected');
-      card.innerHTML = `<div style="flex:1; font-size:0.85rem;"><strong>${ev.name}</strong><br><span class="event-meta">${ev.sizeRule}</span>
-        ${isFull ? '<div style="color:red; font-weight:bold;">FULL</div>' : `<span class="event-meta" style="color:var(--gold)">Slots: ${left}</span>`}</div>`;
+      if(isSelected) card.classList.add('selected');
+      
+      // 2. Card Content with the Selection Indicator area
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+          <div style="flex:1; font-size:0.85rem;">
+            <strong>${ev.name}</strong><br>
+            <span class="event-meta">${ev.sizeRule}</span>
+            <div style="margin-top:5px;">
+              ${isFull ? '<span style="color:red; font-weight:bold;">FULL</span>' : `<span class="event-meta" style="color:var(--gold)">Slots: ${left}</span>`}
+            </div>
+          </div>
+          <div class="selection-indicator" style="margin-left:10px;">
+            ${isSelected ? '<i class="fas fa-check-circle" style="color:var(--maroon); font-size:1.2rem;"></i>' : ''}
+          </div>
+        </div>`;
+      
       if(!isFull) card.onclick = () => selectEvent(date, ev, card);
+      
+      // 3. Append the card so it doesn't overwrite the header
       container.appendChild(card);
     });
   });
 }
 
-function selectEvent(date, ev, el){
-  selectedEvents[date] = ev;
-  Array.from(el.parentNode.querySelectorAll('.option')).forEach(child => child.classList.remove('selected'));
-  el.classList.add('selected');
-}
+function goToDetails() {
+  const dates = Object.keys(selectedEvents || {});
 
-function goToDetails(){
-  if(Object.keys(selectedEvents).length < selectedDates.length){ alert("Select an event."); return; }
+  if (dates.length === 0) {
+    alert("Please select at least one event to continue.");
+    return;
+  }
+
+  // Ensure each selected day has one selected event.
+  for (const date of selectedDates || []) {
+    if (!selectedEvents[date]) {
+      alert(`Please select one event for ${date}.`);
+      return;
+    }
+  }
+
   buildParticipantForms();
   nextStep(3);
 }
+
+function selectEvent(date, ev, el){
+  selectedEvents[date] = ev;
+  
+  // 1. Clear 'selected' class and checkmarks from all other options in this day's container
+  const parent = el.parentNode;
+  Array.from(parent.querySelectorAll('.option')).forEach(child => {
+    child.classList.remove('selected');
+    const indicator = child.querySelector('.selection-indicator');
+    if(indicator) indicator.innerHTML = ''; // Remove checkmark
+  });
+  
+  // 2. Add 'selected' class and checkmark to the clicked card
+  el.classList.add('selected');
+  const activeIndicator = el.querySelector('.selection-indicator');
+  if(activeIndicator) {
+    activeIndicator.innerHTML = '<i class="fas fa-check-circle" style="color:var(--maroon); font-size:1.2rem;"></i>';
+  }
+}
+
 
 function buildParticipantForms(){
   let html = `
@@ -646,8 +734,7 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 </html>
 
 
-
-
+	
 
 
 
