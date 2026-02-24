@@ -617,6 +617,14 @@ async function submitFinalRegistration(){
 }
 
 function showSuccess(){
+  // SET COOKIES FOR THE SELECTED DATES
+  const dates = Object.keys(selectedEvents);
+  dates.forEach(date => {
+      const cookieName = `echelon_reg_${date.replace(/\s/g, '')}`;
+      // Cookie expires in 30 days
+      document.cookie = `${cookieName}=true; max-age=${30*24*60*60}; path=/`;
+  });
+
   document.querySelector(".container").innerHTML = `
     <div style="text-align:center; padding:30px;">
       <i class="fas fa-check-circle" style="font-size:3rem; color:var(--gold); margin-bottom:15px;"></i>
@@ -636,6 +644,7 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 </script>
 </body>
 </html>
+
 
 
 
