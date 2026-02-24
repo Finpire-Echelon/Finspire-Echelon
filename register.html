@@ -525,19 +525,60 @@ function copyData(sourceDate, targetDate, checkbox) {
     }
 }
 
+  // Helper to read cookies
+function getCookie(name) {
+  let cookieArr = document.cookie.split(";");
+  for(let i = 0; i < cookieArr.length; i++) {
+    let cookiePair = cookieArr[i].split("=");
+    if(name == cookiePair[0].trim()) return decodeURIComponent(cookiePair[1]);
+  }
+  return null;
+}
+  
 // Update your submit button to call this instead of submitFinalRegistration directly
 async function validateAndSubmit() {
-    const phones = document.querySelectorAll('input[type="tel"]');
-    for(let p of phones) {
+    // 1. Check for Cookies (Browser-level block)
+    const dates = Object.keys(selectedEvents);
+    for (let date of dates) {
+        const cookieName = `echelon_reg_${date.replace(/\s/g, '')}`;
+        if (getCookie(cookieName)) {
+            alert(`Our records show you already registered for an event on ${date} from this device!`);
+            return;
+        }
+    }
+
+    // 2. Check for Duplicate Phone Numbers within the team
+    const teamSections = document.querySelectorAll('.participant-section');
+    for (let section of teamSections) {
+        const phoneInputs = section.querySelectorAll('input[type="tel"]');
+        const phoneValues = [];
+        
+        for (let p of phoneInputs) {
+            const val = p.value.trim();
+            if (val) {
+                if (phoneValues.includes(val)) {
+                    alert("Each participant in a team must have a unique phone number!");
+                    p.focus();
+                    return;
+                }
+                phoneValues.push(val);
+            }
+        }
+    }
+
+    // 3. Standard Format Validation
+    const allPhones = document.querySelectorAll('input[type="tel"]');
+    for(let p of allPhones) {
         if(p.hasAttribute('required') && !/^[6-9]\d{9}$/.test(p.value)) {
             alert("Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.");
             p.focus();
             return;
         }
     }
+    
+    // If all checks pass, proceed
     submitFinalRegistration();
 }
-
 async function submitFinalRegistration(){
   if(!document.getElementById("declaration").checked){ alert("Please confirm details."); return; }
   const college = document.getElementById('common-college').value.trim();
@@ -595,6 +636,7 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 </script>
 </body>
 </html>
+
 
 
 
