@@ -667,30 +667,50 @@ async function validateAndSubmit() {
     // If all checks pass, proceed
     submitFinalRegistration();
 }
+	
 async function submitFinalRegistration(){
   if(!document.getElementById("declaration").checked){ alert("Please confirm details."); return; }
+  
   const college = document.getElementById('common-college').value.trim();
-  if(!college){ alert("College name required."); return; }
+  const dept = document.getElementById('common-dept').value.trim();
+  if(!college || !dept){ alert("College and Department names are required."); return; }
 
   const btn = document.getElementById("submitBtn");
-  btn.disabled = true; btn.innerText = "Connecting to Server...";
+  const originalText = btn.innerText;
+  btn.disabled = true; 
+  btn.innerText = "Processing Registration...";
 
+  // BUILD THE COMPLETE DATA PAYLOAD
   const payload = {
     selectedEvents: Object.keys(selectedEvents).map(date => {
       const ev = selectedEvents[date];
       const parts = [];
+      // Determine max participants based on event type
       const maxParticipants = (ev.type === "individual") ? 1 : 4;
+      
       for(let i=1; i <= maxParticipants; i++){
         let nameEl = document.getElementById(`${date}-p${i}-name`);
         let phoneEl = document.getElementById(`${date}-p${i}-phone`);
-        if(nameEl && nameEl.value.trim()) parts.push({name:nameEl.value.trim(), phone:phoneEl.value.trim()});
+        // Only push if the name field actually has content
+        if(nameEl && nameEl.value.trim()) {
+          parts.push({
+            name: nameEl.value.trim(), 
+            phone: phoneEl.value.trim()
+          });
+        }
       }
+      
       return { 
-        date, eventName: ev.name, email: document.getElementById(`${date}-email`).value, 
-        college: college, department: document.getElementById('common-dept').value, 
+        date: date, 
+        eventName: ev.name, 
+        email: document.getElementById(`${date}-email`).value.trim(), 
+        college: college, 
+        department: dept, 
         participants: parts 
       };
-    })
+    }),
+    // If you have a transaction ID field in your HTML, capture it here:
+    transactionId: document.getElementById('transaction-id') ? document.getElementById('transaction-id').value.trim() : "DIRECT_ENTRY"
   };
 
   try {
@@ -698,9 +718,22 @@ async function submitFinalRegistration(){
       method: "POST",
       body: JSON.stringify(payload)
     });
-    showSuccess();
+    
+    const result = await response.text();
+
+    if (result.trim() === "Success") {
+      showSuccess();
+    } else {
+      // If result includes "Error", show the Iron-Clad message from Backend
+      alert("⚠️ REGISTRATION FAILED:\n\n" + result.replace("Error: ", ""));
+      btn.disabled = false;
+      btn.innerText = originalText;
+    }
   } catch(e) {
-    showSuccess(); 
+    console.error(e);
+    alert("Connection Error: The server is busy or your internet is unstable. Please try again.");
+    btn.disabled = false;
+    btn.innerText = originalText;
   }
 }
 
@@ -735,6 +768,7 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 
 
 	
+
 
 
 
