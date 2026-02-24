@@ -144,12 +144,19 @@ button:hover:not(:disabled) { background: var(--gold-grad); color: var(--maroon)
 button:disabled { opacity: 0.5; cursor: wait; }
 
 /* MODAL */
+/* --- INTEGRATED MODAL CSS --- */
 .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
 .modal-content { background: var(--maroon); margin: 5% auto; padding: 30px; border: 2px solid var(--gold); width: 90%; max-width: 600px; border-radius: 15px; color: white; position: relative; max-height: 85vh; overflow-y: auto; }
 .close-modal { position: absolute; right: 15px; top: 10px; font-size: 30px; color: var(--gold); cursor: pointer; }
-.modal-section-title { color: var(--gold); font-family: 'Cinzel'; margin: 20px 0 10px; border-bottom: 1px solid rgba(212,175,55,0.3); }
+.modal-section-title { color: var(--gold); font-family: 'Cinzel'; margin: 20px 0 10px; border-bottom: 1px solid rgba(212,175,55,0.3); text-transform: uppercase;font-size: 0.85rem;letter-spacing: 1px;}
 .modal-list { list-style: none; padding: 0; }
-.modal-list li { margin-bottom: 12px; font-size: 0.9rem; line-height: 1.5; }
+.modal-list li { margin-bottom: 12px; font-size: 0.85rem; line-height: 1.5; position: relative;padding-left: 20px;}
+/* Custom Bullet Point */
+.modal-list li::before {content: "◈";position: absolute;left: 0;color: var(--gold);}
+/* Highlight box for the most important rules */
+.rule-highlight-box {background: rgba(212, 175, 55, 0.1);padding: 15px;border-radius: 10px;border: 1px dashed rgba(212, 175, 55, 0.4);}
+.modal-action-btn {width: 100%;margin-top: 20px;padding: 12px;background: var(--gold-grad);color: var(--maroon);border: none;border-radius: 8px;font-family: 'Cinzel';font-weight: 700;cursor: pointer;}
+.modal-action-btn:hover {filter: brightness(1.1);transform: translateY(-2px);}
 
 @media (max-width: 600px) { .btn-container { flex-direction: column; } }
 </style>
@@ -222,17 +229,30 @@ button:disabled { opacity: 0.5; cursor: wait; }
 <div id="helpModal" class="modal">
   <div class="modal-content">
     <span class="close-modal" onclick="closeHelp()">×</span>
-    <h2 style="text-align:center;">REGISTRATION GUIDE</h2>
-    <div class="modal-section-title">Step-by-Step Process</div>
-    <ul class="modal-list">
-      <li><strong>1. Personal Details:</strong> Fill in your Name, Dept, and College accurately.</li>
-      <li><strong>2. Select Events:</strong> Choose competitions. Check for schedule conflicts.</li>
-      <li><strong>3. Team Info:</strong> Provide names & numbers for all members.</li>
-      <li><strong>4. Application:</strong> Click "Register" to send data. Initial status is PENDING.</li>
-      <li><strong>5. Verification:</strong> Done within 24–48 hours.</li>
-      <li><strong>6. Confirmation:</strong> Final confirmation email with Reg ID will be sent.</li>
+    <h2 style="text-align:center; letter-spacing: 2px;">REGISTRATION GUIDE</h2>
+    
+    <div class="modal-section-title"><i class="fas fa-scroll"></i> MANDATORY RULES</div>
+    <ul class="modal-list rule-highlight">
+      <li><strong>One Event Per Day:</strong> You can participate in both March 10 & 11, but only <strong>ONE</strong> event per day is allowed.</li>
+      <li><strong>Unique Identity:</strong> Each participant must use their own unique mobile number. Duplicate numbers across teams will be auto-rejected.</li>
     </ul>
-    <button onclick="closeHelp()" style="width:100%; margin-top:20px;">GOT IT!</button>
+
+    <div class="modal-section-title"><i class="fas fa-users"></i> TEAM COMPOSITION</div>
+    <ul class="modal-list">
+      <li><strong>Biz Auction:</strong> Mandatory 4 Members (Full Team).</li>
+      <li><strong>Identity Unleashed:</strong> Solo Participation (Individual).</li>
+      <li><strong>Other Events:</strong> Minimum 2 Participants required.</li>
+    </ul>
+
+    <div class="modal-section-title"><i class="fas fa-tasks"></i> PROCESS</div>
+    <ul class="modal-list">
+      <li><strong>Step 1:</strong> Select your dates and then your preferred event.</li>
+      <li><strong>Step 2:</strong> Provide Team Lead and member details accurately.</li>
+      <li><strong>Step 3:</strong> Review and Submit. You will receive a <strong>PENDING</strong> status.</li>
+      <li><strong>Step 4:</strong> Verification takes 24-48 hours. Final Reg ID will be emailed upon approval.</li>
+    </ul>
+    
+    <button onclick="closeHelp()" class="modal-close-btn">GOT IT, VRO!</button>
   </div>
 </div>
 
@@ -768,6 +788,7 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 
 
 	
+
 
 
 
