@@ -10,37 +10,37 @@
 
 <style>
 :root {
-  --maroon: #4B0036;
-  --gold: #D4AF37;
-  --gold-grad: linear-gradient(135deg, #D4AF37 0%, #F5F1E6 50%, #D4AF37 100%);
-  --cream: #F5F1E6;
-  --card-bg: rgba(75, 0, 54, 0.6);
-  --input-bg: rgba(45, 0, 33, 0.8);
-  --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-  --error: #ff4d4d;
+  --maroon: #4B0036;
+  --gold: #D4AF37;
+  --gold-grad: linear-gradient(135deg, #D4AF37 0%, #F5F1E6 50%, #D4AF37 100%);
+  --cream: #F5F1E6;
+  --card-bg: rgba(75, 0, 54, 0.6);
+  --input-bg: rgba(45, 0, 33, 0.8);
+  --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  --error: #ff4d4d;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: radial-gradient(circle at center, #630048 0%, #4B0036 100%);
-  color: var(--cream);
-  font-family: 'Montserrat', sans-serif;
-  min-height: 100vh;
-  padding: 10px;
-  padding-top: 100px;
+  background: radial-gradient(circle at center, #630048 0%, #4B0036 100%);
+  color: var(--cream);
+  font-family: 'Montserrat', sans-serif;
+  min-height: 100vh;
+  padding: 10px;
+  padding-top: 100px;
 }
 
 /* NAVBAR */
 #navbar {
-  position: fixed; top: 0; left: 0; width: 100%;
-  background: rgba(45, 0, 33, 0.95); padding: 15px 0;
-  border-bottom: 2px solid var(--gold); z-index: 1000;
+  position: fixed; top: 0; left: 0; width: 100%;
+  background: rgba(45, 0, 33, 0.95); padding: 15px 0;
+  border-bottom: 2px solid var(--gold); z-index: 1000;
 }
 #navbar ul { list-style: none; display: flex; justify-content: center; gap: clamp(15px, 5vw, 40px); }
 .nav-btn-link {
-  text-decoration: none; color: var(--gold); font-family: 'Cinzel';
-  font-weight: 700; letter-spacing: 1px; font-size: 0.85rem;
+  text-decoration: none; color: var(--gold); font-family: 'Cinzel';
+  font-weight: 700; letter-spacing: 1px; font-size: 0.85rem;
 }
 
 .header-branding { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 30px; }
@@ -72,65 +72,65 @@ input { width: 100%; padding: 12px 12px 12px 45px; border-radius: 8px; border: 1
 /* --- BANNER	 --- */
 
 .selection-rule-box {
-    background: rgba(212, 175, 55, 0.1);
-    border-left: 4px solid var(--gold);
-    padding: 12px;
-    margin-bottom: 20px;
-    font-size: 0.8rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    background: rgba(212, 175, 55, 0.1);
+    border-left: 4px solid var(--gold);
+    padding: 12px;
+    margin-bottom: 20px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 /* If any event is selected in a group, dim the others slightly */
 
 #march10Events:has(.selected) .option:not(.selected),
 #march11Events:has(.selected) .option:not(.selected) {
-    opacity: 0.6;
-    filter: saturate(0.5);
+    opacity: 0.6;
+    filter: saturate(0.5);
 }
 
 .option.selected {
-    opacity: 1 !important;
-    filter: saturate(1) !important;
-    transform: scale(1.02); /* Slight pop effect */
-    border: 2px solid var(--gold);
+    opacity: 1 !important;
+    filter: saturate(1) !important;
+    transform: scale(1.02); /* Slight pop effect */
+    border: 2px solid var(--gold);
 }
 
 /* --- SEARCHABLE DROPDOWN CSS --- */
 .dropdown-container { position: relative; width: 100%; }
 .dropdown-list {
-  position: absolute; top: calc(100% + 5px); left: 0; width: 100%;
-  background: #2d0021; border: 1px solid var(--gold);
-  border-radius: 8px; z-index: 2000;
-  max-height: 250px; overflow-y: auto; display: none;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+  position: absolute; top: calc(100% + 5px); left: 0; width: 100%;
+  background: #2d0021; border: 1px solid var(--gold);
+  border-radius: 8px; z-index: 2000;
+  max-height: 250px; overflow-y: auto; display: none;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.8);
 }
 .dropdown-item {
-    padding: 14px 18px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    color: var(--cream);
-    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-    transition: all 0.2s ease;
-    text-align: left;
-    white-space: normal;
-    line-height: 1.4;
-    background: #2d0021;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--cream);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+    transition: all 0.2s ease;
+    text-align: left;
+    white-space: normal;
+    line-height: 1.4;
+    background: #2d0021;
 }
 .dropdown-item i { flex-shrink: 0; width: 18px; margin-top: 2px; color: var(--gold); text-align: center; }
 
 .dropdown-item:hover {
-    background: var(--gold-grad) !important;
-    color: var(--maroon) !important;
-    font-weight: 700;
-    padding-left: 25px; /* Subtle slide effect on hover */
+    background: var(--gold-grad) !important;
+    color: var(--maroon) !important;
+    font-weight: 700;
+    padding-left: 25px; /* Subtle slide effect on hover */
 }
 
 .dropdown-item:hover i { color: var(--maroon); }
 .add-new-item {
-  background: var(--maroon); color: var(--gold); border-top: 2px solid var(--gold);
-  position: sticky; bottom: 0; font-weight: bold; text-transform: uppercase; font-family: 'Cinzel';
+  background: var(--maroon); color: var(--gold); border-top: 2px solid var(--gold);
+  position: sticky; bottom: 0; font-weight: bold; text-transform: uppercase; font-family: 'Cinzel';
 }
 .dropdown-list::-webkit-scrollbar { width: 6px; }
 .dropdown-list::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
@@ -164,616 +164,684 @@ button:disabled { opacity: 0.5; cursor: wait; }
 <body>
 
 <nav id="navbar">
-    <ul>
-        <li><a href="index.html" class="nav-btn-link">HOME</a></li>
-        <li><a href="events.html" class="nav-btn-link">EVENTS</a></li>
-        <li><a href="contact.html" class="nav-btn-link">CONTACT</a></li>
-    </ul>
+    <ul>
+        <li><a href="index.html" class="nav-btn-link">HOME</a></li>
+        <li><a href="events.html" class="nav-btn-link">EVENTS</a></li>
+        <li><a href="contact.html" class="nav-btn-link">CONTACT</a></li>
+    </ul>
 </nav>
 
 <div class="header-branding">
-  <img src="https://lh3.googleusercontent.com/d/1JAn4QUP7_QA1jymyHLBpQQ4gicuXgliV" class="logo" alt="RMKVC">
-  <h1>ECHELON '26</h1>
-  <img src="https://lh3.googleusercontent.com/d/167gpyrjV3XO-mx31F_nsqXX7c6lE6QoY" class="logo" alt="Finspire">
+  <img src="https://lh3.googleusercontent.com/d/1JAn4QUP7_QA1jymyHLBpQQ4gicuXgliV" class="logo" alt="RMKVC">
+  <h1>ECHELON '26</h1>
+  <img src="https://lh3.googleusercontent.com/d/167gpyrjV3XO-mx31F_nsqXX7c6lE6QoY" class="logo" alt="Finspire">
 </div>
 
 <div class="container">
-  <div class="progress">
-    <div id="p1" class="active"></div>
-    <div id="p2"></div>
-    <div id="p3"></div>
-  </div>
+  <div class="progress">
+    <div id="p1" class="active"></div>
+    <div id="p2"></div>
+    <div id="p3"></div>
+  </div>
 
-  <form id="masterForm">
-    <div class="step active" id="step1">
-      <h2>Select Event Day(s)</h2>
-      <p class="instruction-text">Note: Choose one or both days to participate.</p>
-      <div class="option" onclick="toggleDate('March 10',this)">March 10 <i class="fas fa-calendar-day" style="float:right"></i></div>
-      <div class="option" onclick="toggleDate('March 11',this)">March 11 <i class="fas fa-calendar-day" style="float:right"></i></div>
-      <div class="btn-container"><button type="button" onclick="goToEvents()">Next Step</button></div>
-    </div>
+  <form id="masterForm">
+    <div class="step active" id="step1">
+      <h2>Select Event Day(s)</h2>
+      <p class="instruction-text">Note: Choose one or both days to participate.</p>
+      <div class="option" onclick="toggleDate('March 10',this)">March 10 <i class="fas fa-calendar-day" style="float:right"></i></div>
+      <div class="option" onclick="toggleDate('March 11',this)">March 11 <i class="fas fa-calendar-day" style="float:right"></i></div>
+      <div class="btn-container"><button type="button" onclick="goToEvents()">Next Step</button></div>
+    </div>
 
-   <div class="step" id="step2">
-  <h2>Select Your Event(s)</h2>
-  <div class="events-container">
-    <div id="march10Events"></div>
-    <div id="march11Events"></div>
-  </div>
-  <div class="btn-container">
-    <button type="button" onclick="prevStep(1)">Back</button>
-    <button type="button" onclick="goToDetails()">Continue</button>
-  </div>
+   <div class="step" id="step2">
+  <h2>Select Your Event(s)</h2>
+  <div class="events-container">
+    <div id="march10Events"></div>
+    <div id="march11Events"></div>
+  </div>
+  <div class="btn-container">
+    <button type="button" onclick="prevStep(1)">Back</button>
+    <button type="button" onclick="goToDetails()">Continue</button>
+  </div>
 </div>
 
-    <div class="step" id="step3">
-      <h2>Participant Details</h2>
-      <div id="dynamicForm"></div>
-      <label style="display: block; margin-top: 15px; font-size: 0.75rem; cursor: pointer;">
-        <input type="checkbox" id="declaration" style="width: auto; margin-right: 10px;">
-        I confirm all entered details are accurate.
-      </label>
-      <div class="btn-container">
-        <button type="button" onclick="prevStep(2)">Back</button>
-        <button type="button" id="submitBtn" onclick="validateAndSubmit()">Finish Registration</button>
-      </div>
-    </div>
-  </form>
+    <div class="step" id="step3">
+      <h2>Participant Details</h2>
+      <div id="dynamicForm"></div>
+      <label style="display: block; margin-top: 15px; font-size: 0.75rem; cursor: pointer;">
+        <input type="checkbox" id="declaration" style="width: auto; margin-right: 10px;">
+        I confirm all entered details are accurate.
+      </label>
+      <div class="btn-container">
+        <button type="button" onclick="prevStep(2)">Back</button>
+        <button type="button" id="submitBtn" onclick="validateAndSubmit()">Finish Registration</button>
+      </div>
+    </div>
+  </form>
 </div>
 
 <div style="text-align: center; margin-top: 20px;">
-  <button type="button" style="width: auto; padding: 8px 20px; border-color: #666; color: #aaa; font-size: 0.75rem;" onclick="openHelp()">
-      <i class="fas fa-question-circle"></i> Registration Guide
-  </button>
+  <button type="button" style="width: auto; padding: 8px 20px; border-color: #666; color: #aaa; font-size: 0.75rem;" onclick="openHelp()">
+      <i class="fas fa-question-circle"></i> Registration Guide
+  </button>
+</div>
+
+<div style="text-align: center; margin-top: 10px;">
+  <button type="button" style="width: auto; padding: 8px 20px; border-color: var(--error); color: var(--error); font-size: 0.75rem; background: transparent;" onclick="openIssueModal()">
+      <i class="fas fa-exclamation-triangle"></i> Facing Issues? Report Here
+  </button>
+</div>
+
+<div id="issueModal" class="modal">
+  <div class="modal-content" style="max-width: 400px;">
+    <span class="close-modal" onclick="closeIssueModal()">×</span>
+    <h2 style="text-align:center; font-family:'Cinzel'; color: var(--gold);">REPORT ISSUE</h2>
+    <p style="font-size: 0.75rem; text-align: center; margin-bottom: 20px;">Our team will contact you shortly.</p>
+    
+    <div class="input-wrapper" style="margin-bottom: 15px;">
+      <i class="fas fa-user"></i>
+      <input id="issue-name" placeholder="Your Name">
+    </div>
+    <div class="input-wrapper" style="margin-bottom: 15px;">
+      <i class="fas fa-phone"></i>
+      <input id="issue-phone" placeholder="Phone Number" maxlength="10">
+    </div>
+    <div class="input-wrapper" style="margin-bottom: 15px;">
+      <i class="fas fa-comment-dots" style="top: 15px; transform: none;"></i>
+      <textarea id="issue-desc" placeholder="Describe the problem..." style="width: 100%; padding: 12px 12px 12px 45px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3); background: var(--input-bg); color: var(--cream); height: 100px; font-family: 'Montserrat';"></textarea>
+    </div>
+
+    <button id="issueSubmitBtn" onclick="submitIssue()" class="modal-action-btn" style="background: var(--error); color: white;">SEND REPORT</button>
+  </div>
 </div>
 
 <div id="helpModal" class="modal">
-  <div class="modal-content">
-    <span class="close-modal" onclick="closeHelp()">×</span>
-    <h2 style="text-align:center; letter-spacing: 2px;">REGISTRATION GUIDE</h2>
-    
-    <div class="modal-section-title"><i class="fas fa-scroll"></i> MANDATORY RULES</div>
-    <ul class="modal-list rule-highlight">
-      <li><strong>One Event Per Day:</strong> You can participate in both March 10 & 11, but only <strong>ONE</strong> event per day is allowed.</li>
-      <li><strong>Unique Identity:</strong> Each participant must use their own unique mobile number. Duplicate numbers across teams will be auto-rejected.</li>
-    </ul>
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeHelp()">×</span>
+    <h2 style="text-align:center; letter-spacing: 2px;">REGISTRATION GUIDE</h2>
+    
+    <div class="modal-section-title"><i class="fas fa-scroll"></i> MANDATORY RULES</div>
+    <ul class="modal-list rule-highlight">
+      <li><strong>One Event Per Day:</strong> You can participate in both March 10 & 11, but only <strong>ONE</strong> event per day is allowed.</li>
+      <li><strong>Unique Identity:</strong> Each participant must use their own unique mobile number. Duplicate numbers across teams will be auto-rejected.</li>
+    </ul>
 
-    <div class="modal-section-title"><i class="fas fa-users"></i> TEAM COMPOSITION</div>
-    <ul class="modal-list">
-      <li><strong>Biz Auction:</strong> Mandatory 4 Members (Full Team).</li>
-      <li><strong>Identity Unleashed:</strong> Solo Participation (Individual).</li>
-      <li><strong>Other Events:</strong> Minimum 2 Participants required.</li>
-    </ul>
+    <div class="modal-section-title"><i class="fas fa-users"></i> TEAM COMPOSITION</div>
+    <ul class="modal-list">
+      <li><strong>Biz Auction:</strong> Mandatory 4 Members (Full Team).</li>
+      <li><strong>Identity Unleashed:</strong> Solo Participation (Individual).</li>
+      <li><strong>Other Events:</strong> Minimum 2 Participants required.</li>
+    </ul>
 
-    <div class="modal-section-title"><i class="fas fa-tasks"></i> PROCESS</div>
-    <ul class="modal-list">
-      <li><strong>Step 1:</strong> Select your dates and then your preferred event.</li>
-      <li><strong>Step 2:</strong> Provide Team Lead and member details accurately.</li>
-      <li><strong>Step 3:</strong> Review and Submit. You will receive a <strong>PENDING</strong> status.</li>
-      <li><strong>Step 4:</strong> Verification takes 24-48 hours. Final Reg ID will be emailed upon approval.</li>
-    </ul>
-    
-    <button onclick="closeHelp()" class="modal-close-btn">GOT IT, VRO!</button>
-  </div>
+    <div class="modal-section-title"><i class="fas fa-tasks"></i> PROCESS</div>
+    <ul class="modal-list">
+      <li><strong>Step 1:</strong> Select your dates and then your preferred event.</li>
+      <li><strong>Step 2:</strong> Provide Team Lead and member details accurately.</li>
+      <li><strong>Step 3:</strong> Review and Submit. You will receive a <strong>PENDING</strong> status.</li>
+      <li><strong>Step 4:</strong> Verification takes 24-48 hours. Final Reg ID will be emailed upon approval.</li>
+    </ul>
+    
+    <button onclick="closeHelp()" class="modal-close-btn">GOT IT, VRO!</button>
+  </div>
 </div>
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwzg11AWDqeDXbEbcyeZwnTG9KR9wxaZ_Xd6LsIi-rvNYDO-Qgxh_cjdqi3XA1_-_I_/exec";
 
 const EVENT_CONFIG = {
-  "March 10": { "Make or Break": { capacity: 35 }, "Quizpreneur": { capacity: 50 }, "Behind the Brand": { capacity: 20 } },
-  "March 11": { "Biz Auction": { capacity: 15 }, "Decision Table": { capacity: 30 }, "Identity Unleashed": { capacity: 100 } }
+  "March 10": { "Make or Break": { capacity: 35 }, "Quizpreneur": { capacity: 50 }, "Behind the Brand": { capacity: 20 } },
+  "March 11": { "Biz Auction": { capacity: 15 }, "Decision Table": { capacity: 30 }, "Identity Unleashed": { capacity: 100 } }
 };
 
 const eventData = {
-  "March 10": [
-    {name:"Make or Break", type:"team", sizeRule: "Team: 2–4 Members"},
-    {name:"Quizpreneur", type:"team", sizeRule: "Team: 2–4 Members"},
-    {name:"Behind the Brand", type:"team", sizeRule: "Team: 2–4 Members"}
-  ],
-  "March 11": [
-    {name:"Biz Auction", type:"biz", sizeRule: "Team: Exactly 4 Members"},
-    {name:"Decision Table", type:"team", sizeRule: "Team: 2–4 Members"},
-    {name:"Identity Unleashed", type:"individual", sizeRule: "Individual (1 Participant)"}
-  ]
+  "March 10": [
+    {name:"Make or Break", type:"team", sizeRule: "Team: 2–4 Members"},
+    {name:"Quizpreneur", type:"team", sizeRule: "Team: 2–4 Members"},
+    {name:"Behind the Brand", type:"team", sizeRule: "Team: 2–4 Members"}
+  ],
+  "March 11": [
+    {name:"Biz Auction", type:"biz", sizeRule: "Team: Exactly 4 Members"},
+    {name:"Decision Table", type:"team", sizeRule: "Team: 2–4 Members"},
+    {name:"Identity Unleashed", type:"individual", sizeRule: "Individual (1 Participant)"}
+  ]
 };
 
 // --- COLLEGE LIST DATA ---
 let collegeMasterList = [
-    "Anna University", "Indian Institute of Technology Madras", "Madras School of Social Work", "University of Madras", "SSN College of Engineering and SNU", "Hindustan Institute of Technology and Science", "Rajalakshmi Engineering College", "S.A. Engineering College", "SRM Institute of Science and Technology", "Madras School of Economics", "MNM Jain College", "Panimalar Engineering College", "Velammal Engineering College", "Jerusalem College of Engineering", "Saveetha Engineering College", "RMD Engineering College", "Great Lakes Institute of Management", "LIBA (Loyola Institute of Business Administration), Chennai", "Institute for Financial Management and Research", "Tamil Nadu Dr. Ambedkar Law University", "Sathyabama Institute of Science and Technology", "Krishnaswamy College for Women", "SRM Vadapalani", "SRM Ramapuram", "Institute of Venture Building", "Measi institute of management", "Avichi college of art and science", "Asan Memorial College of Arts and Science, Chennai", "Bhaktavatsalam Memorial College for Women, Chennai", "Meenakshi College for Women, Chennai", "Sriram College of Arts and Science, Chennai", "Vels University (Vel's College of Science), Chennai", "A.M. Jain College (Men), Chennai", "Bharathi's Women's College (Autonomous), Chennai", "C. Kandasami Naidu College for Men, Chennai", "Chellammal Women's College of the Pachaiyappa's Trust, Chennai", "Dhanraj Baid Jain College (Autonomous), Chennai", "Dharmamurthi Rao Bahadur Calavala Cunnan Chetty's Hindu (D.R.B.C.C.C.H.) College, Chennai", "Dr. Ambedkar Government Arts College, Chennai", "Dwaraka Doss Goverdhan Doss Vaishnav (DG Vaishnav) College, Chennai", "Ethiraj College for Women (Autonomous), Chennai", "Govt. Arts College for Men (Autonomous), Chennai", "Guru Nanak College, Chennai", "Justice Basheer Ahmed Syed College for Women, Chennai", "Loyola College (Autonomous), Chennai", "Madras Christian College (Autonomous), Chennai", "New College (Autonomous), Chennai", "Pachaiyappa's College, Chennai", "Presidency College (Autonomous), Chennai", "Quaid-e-Millet College, Chennai", "Quaid-e-Millet Government Arts College for Women (Autonomous), Chennai", "Queen Mary's College (Autonomous), Chennai", "Ramakrishna Mission Vivekananda College (Men), Chennai", "S.D.N. Bhatt Vaishnav College for Women, Chennai", "S.I.V.E.T. College, Chennai", "St. Louis College for the Deaf, Chennai", "Stella Maris College for Women (Autonomous), Chennai", "Women's Christian College (Autonomous), Chennai", "A.A. Arts and Science College (Women), Chennai", "Alpha Arts and Science College, Chennai", "Anna Adarsh College for Women, Chennai", "Annai Veilankanni's College of Arts and Science, Chennai", "Annai Violet Arts and Science College, Chennai", "C.T.M. College of Arts and Science, Chennai", "Chevaliar T. Thomas Elizabeth College for Women, Chennai", "Dr. M.G.R. Janaki College of Arts and Science for Women, Chennai", "Guru Shree Shanti Vijai Jain College for Women, Chennai", "Hindustan College of Arts and Science, Kelambakkam", "Indian Harvard Arts and Science College, Chennai", "J.A. Arts and Science College, Chennai", "Jayagovind Harigopal Agarwal Agarsen College, Chennai", "K.C.S. Kasi Nadar College of Arts and Science, Chennai", "Kumara Rani Meena Muthiah College of Arts and Science for Women, Chennai", "M.O.P. Vaishnav College for Women (Autonomous), Chennai", "Madha Arts and Science College, Chennai", "Mahalakshmi College of Arts and Science, Chennai", "Mar Gregorios Arts and Science College, Chennai", "Mohamed Sathak College of Arts and Science, Chennai", "Nazareth College of Arts and Science, Chennai", "New Prince Shri Bhavani Arts and Science College, Chennai", "Patrician College of Arts and Science, Chennai", "Poonga College of Arts and Science, Chennai", "Prince Shri Venkateshwara Arts and Science College, Chennai", "Prof. Dhanapalan College for Women, Chennai", "R.B. Gothi Jain College for Women, Chennai", "S.R.M. Arts and Science College, Chengalpattu Taluk", "Shri Shankarlal Sundarbai Shasun Jain College for Women, Chennai", "Sindhi College of Arts and Science, Chennai", "Sir Theagaraya College, Chennai", "Soka Ikeda Arts and Science College for Women, Chennai", "Sri Kanniga Parameswari Arts and Science College for Women, Chennai", "Sri Muthukumarasamy College, Chennai", "St. Joseph's College (Arts and Science), Chennai", "St. Thomas College of Arts and Science, Chennai", "T.M.G. College of Arts and Science, Chennai", "T.S. Narayanasamy College of Arts and Science, Chennai", "Tamilnadu Arts and Science College, Chennai", "Thirumurugan College of Arts and Science, Thiruvallur", "Thiruthangal Nadar College, Chennai", "Vailakanni Malathy Pannicker College of Arts and Science, Chennai", "Valliammal College for Women, Chennai", "Vel Sri Ranga Sanku College, Chennai", "Tagore College of Arts and Science, Chennai"
+    "Anna University", "Indian Institute of Technology Madras", "Madras School of Social Work", "University of Madras", "SSN College of Engineering and SNU", "Hindustan Institute of Technology and Science", "Rajalakshmi Engineering College", "S.A. Engineering College", "SRM Institute of Science and Technology", "Madras School of Economics", "MNM Jain College", "Panimalar Engineering College", "Velammal Engineering College", "Jerusalem College of Engineering", "Saveetha Engineering College", "RMD Engineering College", "Great Lakes Institute of Management", "LIBA (Loyola Institute of Business Administration), Chennai", "Institute for Financial Management and Research", "Tamil Nadu Dr. Ambedkar Law University", "Sathyabama Institute of Science and Technology", "Krishnaswamy College for Women", "SRM Vadapalani", "SRM Ramapuram", "Institute of Venture Building", "Measi institute of management", "Avichi college of art and science", "Asan Memorial College of Arts and Science, Chennai", "Bhaktavatsalam Memorial College for Women, Chennai", "Meenakshi College for Women, Chennai", "Sriram College of Arts and Science, Chennai", "Vels University (Vel's College of Science), Chennai", "A.M. Jain College (Men), Chennai", "Bharathi's Women's College (Autonomous), Chennai", "C. Kandasami Naidu College for Men, Chennai", "Chellammal Women's College of the Pachaiyappa's Trust, Chennai", "Dhanraj Baid Jain College (Autonomous), Chennai", "Dharmamurthi Rao Bahadur Calavala Cunnan Chetty's Hindu (D.R.B.C.C.C.H.) College, Chennai", "Dr. Ambedkar Government Arts College, Chennai", "Dwaraka Doss Goverdhan Doss Vaishnav (DG Vaishnav) College, Chennai", "Ethiraj College for Women (Autonomous), Chennai", "Govt. Arts College for Men (Autonomous), Chennai", "Guru Nanak College, Chennai", "Justice Basheer Ahmed Syed College for Women, Chennai", "Loyola College (Autonomous), Chennai", "Madras Christian College (Autonomous), Chennai", "New College (Autonomous), Chennai", "Pachaiyappa's College, Chennai", "Presidency College (Autonomous), Chennai", "Quaid-e-Millet College, Chennai", "Quaid-e-Millet Government Arts College for Women (Autonomous), Chennai", "Queen Mary's College (Autonomous), Chennai", "Ramakrishna Mission Vivekananda College (Men), Chennai", "S.D.N. Bhatt Vaishnav College for Women, Chennai", "S.I.V.E.T. College, Chennai", "St. Louis College for the Deaf, Chennai", "Stella Maris College for Women (Autonomous), Chennai", "Women's Christian College (Autonomous), Chennai", "A.A. Arts and Science College (Women), Chennai", "Alpha Arts and Science College, Chennai", "Anna Adarsh College for Women, Chennai", "Annai Veilankanni's College of Arts and Science, Chennai", "Annai Violet Arts and Science College, Chennai", "C.T.M. College of Arts and Science, Chennai", "Chevaliar T. Thomas Elizabeth College for Women, Chennai", "Dr. M.G.R. Janaki College of Arts and Science for Women, Chennai", "Guru Shree Shanti Vijai Jain College for Women, Chennai", "Hindustan College of Arts and Science, Kelambakkam", "Indian Harvard Arts and Science College, Chennai", "J.A. Arts and Science College, Chennai", "Jayagovind Harigopal Agarwal Agarsen College, Chennai", "K.C.S. Kasi Nadar College of Arts and Science, Chennai", "Kumara Rani Meena Muthiah College of Arts and Science for Women, Chennai", "M.O.P. Vaishnav College for Women (Autonomous), Chennai", "Madha Arts and Science College, Chennai", "Mahalakshmi College of Arts and Science, Chennai", "Mar Gregorios Arts and Science College, Chennai", "Mohamed Sathak College of Arts and Science, Chennai", "Nazareth College of Arts and Science, Chennai", "New Prince Shri Bhavani Arts and Science College, Chennai", "Patrician College of Arts and Science, Chennai", "Poonga College of Arts and Science, Chennai", "Prince Shri Venkateshwara Arts and Science College, Chennai", "Prof. Dhanapalan College for Women, Chennai", "R.B. Gothi Jain College for Women, Chennai", "S.R.M. Arts and Science College, Chengalpattu Taluk", "Shri Shankarlal Sundarbai Shasun Jain College for Women, Chennai", "Sindhi College of Arts and Science, Chennai", "Sir Theagaraya College, Chennai", "Soka Ikeda Arts and Science College for Women, Chennai", "Sri Kanniga Parameswari Arts and Science College for Women, Chennai", "Sri Muthukumarasamy College, Chennai", "St. Joseph's College (Arts and Science), Chennai", "St. Thomas College of Arts and Science, Chennai", "T.M.G. College of Arts and Science, Chennai", "T.S. Narayanasamy College of Arts and Science, Chennai", "Tamilnadu Arts and Science College, Chennai", "Thirumurugan College of Arts and Science, Thiruvallur", "Thiruthangal Nadar College, Chennai", "Vailakanni Malathy Pannicker College of Arts and Science, Chennai", "Valliammal College for Women, Chennai", "Vel Sri Ranga Sanku College, Chennai", "Tagore College of Arts and Science, Chennai"
 ];
 
 let selectedDates = [];
 let selectedEvents = {};
 
 function toggleDate(date, el) {
-  if (selectedDates.includes(date)) {
-    selectedDates = selectedDates.filter(d => d !== date);
-    delete selectedEvents[date];
-    el.classList.remove("selected");
-  } else {
-    selectedDates.push(date);
-    el.classList.add("selected");
-  }
+  if (selectedDates.includes(date)) {
+    selectedDates = selectedDates.filter(d => d !== date);
+    delete selectedEvents[date];
+    el.classList.remove("selected");
+  } else {
+    selectedDates.push(date);
+    el.classList.add("selected");
+  }
 }
 
 async function fetchCapacity() {
-  const res = await fetch(SCRIPT_URL + "?action=capacity");
-  return await res.json();
+  const res = await fetch(SCRIPT_URL + "?action=capacity");
+  return await res.json();
 }
 
 async function goToEvents(){
-  if(selectedDates.length === 0){ alert("Please select a date."); return; }
-  const btn = document.querySelector("button[onclick='goToEvents()']");
-  btn.innerText = "Syncing..."; btn.disabled = true;
-  try {
-    const liveData = await fetchCapacity();
-    buildEventOptions(liveData);
-    nextStep(2);
-  } catch (error) { buildEventOptions({}); nextStep(2); }  
-  finally { btn.innerText = "Next Step"; btn.disabled = false; }
+  if(selectedDates.length === 0){ alert("Please select a date."); return; }
+  const btn = document.querySelector("button[onclick='goToEvents()']");
+  btn.innerText = "Syncing..."; btn.disabled = true;
+  try {
+    const liveData = await fetchCapacity();
+    buildEventOptions(liveData);
+    nextStep(2);
+  } catch (error) { buildEventOptions({}); nextStep(2); }  
+  finally { btn.innerText = "Next Step"; btn.disabled = false; }
 }
 
 
 function buildEventOptions(liveData){
-  // Clear the event containers first
-  document.getElementById("march10Events").innerHTML = "";
-  document.getElementById("march11Events").innerHTML = "";
-  
-  selectedDates.forEach(date => {
-    let container = document.getElementById(date === "March 10" ? "march10Events" : "march11Events");
-    
-    // 1. Set the Initial Header and Rule Box ONCE for the date
-    container.innerHTML = `
-      <div class="selection-rule-box">
-        <i class="fas fa-info-circle"></i>
-        <span>Pick 1 Event Only for ${date}. Selecting a new one replaces the old one.</span>
-      </div>
-      <h3 style="color:var(--gold); font-family:'Cinzel'; margin: 15px 0 10px; font-size: 0.9rem;">${date}</h3>
-    `;
+  // Clear the event containers first
+  document.getElementById("march10Events").innerHTML = "";
+  document.getElementById("march11Events").innerHTML = "";
+  
+  selectedDates.forEach(date => {
+    let container = document.getElementById(date === "March 10" ? "march10Events" : "march11Events");
+    
+    // 1. Set the Initial Header and Rule Box ONCE for the date
+    container.innerHTML = `
+      <div class="selection-rule-box">
+        <i class="fas fa-info-circle"></i>
+        <span>Pick 1 Event Only for ${date}. Selecting a new one replaces the old one.</span>
+      </div>
+      <h3 style="color:var(--gold); font-family:'Cinzel'; margin: 15px 0 10px; font-size: 0.9rem;">${date}</h3>
+    `;
 
-    eventData[date].forEach(ev => {
-      const stats = liveData?.[date]?.[ev.name];
-      const left = EVENT_CONFIG[date][ev.name].capacity - (stats ? stats.approved : 0);
-      const isFull = left <= 0;
-      const isSelected = selectedEvents[date]?.name === ev.name;
-      
-      const card = document.createElement('div');
-      card.className = `option ${isFull ? 'disabled' : ''}`;
-      if(isSelected) card.classList.add('selected');
-      
-      // 2. Card Content with the Selection Indicator area
-      card.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-          <div style="flex:1; font-size:0.85rem;">
-            <strong>${ev.name}</strong><br>
-            <span class="event-meta">${ev.sizeRule}</span>
-            <div style="margin-top:5px;">
-              ${isFull ? '<span style="color:red; font-weight:bold;">FULL</span>' : `<span class="event-meta" style="color:var(--gold)">Slots: ${left}</span>`}
-            </div>
-          </div>
-          <div class="selection-indicator" style="margin-left:10px;">
-            ${isSelected ? '<i class="fas fa-check-circle" style="color:var(--maroon); font-size:1.2rem;"></i>' : ''}
-          </div>
-        </div>`;
-      
-      if(!isFull) card.onclick = () => selectEvent(date, ev, card);
-      
-      // 3. Append the card so it doesn't overwrite the header
-      container.appendChild(card);
-    });
-  });
+    eventData[date].forEach(ev => {
+      const stats = liveData?.[date]?.[ev.name];
+      const left = EVENT_CONFIG[date][ev.name].capacity - (stats ? stats.approved : 0);
+      const isFull = left <= 0;
+      const isSelected = selectedEvents[date]?.name === ev.name;
+      
+      const card = document.createElement('div');
+      card.className = `option ${isFull ? 'disabled' : ''}`;
+      if(isSelected) card.classList.add('selected');
+      
+      // 2. Card Content with the Selection Indicator area
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+          <div style="flex:1; font-size:0.85rem;">
+            <strong>${ev.name}</strong><br>
+            <span class="event-meta">${ev.sizeRule}</span>
+            <div style="margin-top:5px;">
+              ${isFull ? '<span style="color:red; font-weight:bold;">FULL</span>' : `<span class="event-meta" style="color:var(--gold)">Slots: ${left}</span>`}
+            </div>
+          </div>
+          <div class="selection-indicator" style="margin-left:10px;">
+            ${isSelected ? '<i class="fas fa-check-circle" style="color:var(--maroon); font-size:1.2rem;"></i>' : ''}
+          </div>
+        </div>`;
+      
+      if(!isFull) card.onclick = () => selectEvent(date, ev, card);
+      
+      // 3. Append the card so it doesn't overwrite the header
+      container.appendChild(card);
+    });
+  });
 }
 
 function goToDetails() {
-  const dates = Object.keys(selectedEvents || {});
+  const dates = Object.keys(selectedEvents || {});
 
-  if (dates.length === 0) {
-    alert("Please select at least one event to continue.");
-    return;
-  }
+  if (dates.length === 0) {
+    alert("Please select at least one event to continue.");
+    return;
+  }
 
-  // Ensure each selected day has one selected event.
-  for (const date of selectedDates || []) {
-    if (!selectedEvents[date]) {
-      alert(`Please select one event for ${date}.`);
-      return;
-    }
-  }
+  // Ensure each selected day has one selected event.
+  for (const date of selectedDates || []) {
+    if (!selectedEvents[date]) {
+      alert(`Please select one event for ${date}.`);
+      return;
+    }
+  }
 
-  buildParticipantForms();
-  nextStep(3);
+  buildParticipantForms();
+  nextStep(3);
 }
 
 function selectEvent(date, ev, el){
-  selectedEvents[date] = ev;
-  
-  // 1. Clear 'selected' class and checkmarks from all other options in this day's container
-  const parent = el.parentNode;
-  Array.from(parent.querySelectorAll('.option')).forEach(child => {
-    child.classList.remove('selected');
-    const indicator = child.querySelector('.selection-indicator');
-    if(indicator) indicator.innerHTML = ''; // Remove checkmark
-  });
-  
-  // 2. Add 'selected' class and checkmark to the clicked card
-  el.classList.add('selected');
-  const activeIndicator = el.querySelector('.selection-indicator');
-  if(activeIndicator) {
-    activeIndicator.innerHTML = '<i class="fas fa-check-circle" style="color:var(--maroon); font-size:1.2rem;"></i>';
-  }
+  selectedEvents[date] = ev;
+  
+  // 1. Clear 'selected' class and checkmarks from all other options in this day's container
+  const parent = el.parentNode;
+  Array.from(parent.querySelectorAll('.option')).forEach(child => {
+    child.classList.remove('selected');
+    const indicator = child.querySelector('.selection-indicator');
+    if(indicator) indicator.innerHTML = ''; // Remove checkmark
+  });
+  
+  // 2. Add 'selected' class and checkmark to the clicked card
+  el.classList.add('selected');
+  const activeIndicator = el.querySelector('.selection-indicator');
+  if(activeIndicator) {
+    activeIndicator.innerHTML = '<i class="fas fa-check-circle" style="color:var(--maroon); font-size:1.2rem;"></i>';
+  }
 }
 
+function openIssueModal() { document.getElementById("issueModal").style.display = "block"; }
+function closeIssueModal() { document.getElementById("issueModal").style.display = "none"; }
+
+async function submitIssue() {
+  const name = document.getElementById("issue-name").value.trim();
+  const phone = document.getElementById("issue-phone").value.trim();
+  const desc = document.getElementById("issue-desc").value.trim();
+  const btn = document.getElementById("issueSubmitBtn");
+
+  if(!name || !phone || !desc) { alert("Please fill all fields."); return; }
+
+  btn.disabled = true;
+  btn.innerText = "Sending...";
+
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "reportIssue",
+        name: name,
+        phone: phone,
+        description: desc
+      })
+    });
+    
+    const result = await response.text();
+    if(result === "Success") {
+      alert("Issue reported! Our team will call you if needed.");
+      closeIssueModal();
+    } else {
+      alert("Failed to send report. Please try again.");
+    }
+  } catch(e) {
+    alert("Check your internet connection.");
+  } finally {
+    btn.disabled = false;
+    btn.innerText = "SEND REPORT";
+  }
+}
 
 function buildParticipantForms(){
-  let html = `
-    <div class="participant-section" style="border: 2px solid var(--gold); overflow: visible !important;">
-      <span class="participant-title">Institution & Department</span>
-      <div class="input-grid">
-        <div class="input-wrapper dropdown-container">
-          <i class="fas fa-university"></i>
-          <input id="common-college" placeholder="Search College Name" 
-                 onfocus="showColleges()" oninput="filterColleges()" autocomplete="off">
-          <div id="collegeList" class="dropdown-list"></div>
-        </div>
-        <div class="input-wrapper dropdown-container">
-          <i class="fas fa-graduation-cap"></i>
-          <input id="common-dept" placeholder="Search Department" 
-                 onfocus="showDepts()" oninput="filterDepts()" autocomplete="off">
-          <div id="deptList" class="dropdown-list"></div>
-        </div>
-      </div>
-    </div>`;
-  
-  const dates = Object.keys(selectedEvents);
-  dates.forEach((date, index)=>{
-    let ev=selectedEvents[date];
-    // Add "Same as" checkbox for the second date selected
-    let copyCheckbox = (index > 0) ? `<label style="display:block; margin-bottom:10px; font-size:0.7rem; color:var(--gold); cursor:pointer;"><input type="checkbox" onchange="copyData('${dates[0]}', '${date}', this)" style="width:auto; margin-right:5px;"> Same as ${dates[0]}</label>` : '';
-    
-    html+=`<div class="participant-section">
-      <h3 style="font-family:'Cinzel'; color:var(--gold); font-size:0.85rem; margin-bottom:10px; border-bottom:1px solid rgba(212,55,55,0.1); padding-bottom:5px;">${date} – ${ev.name}</h3>
-      ${copyCheckbox}
-      <div class="input-wrapper" style="margin-bottom:10px;"><i class="fas fa-envelope"></i><input type="email" id="${date}-email" placeholder="Email Address" required></div>
-      ${participantFields(ev, date)}
-    </div>`;
-  });
-  document.getElementById("dynamicForm").innerHTML=html;
+  let html = `
+    <div class="participant-section" style="border: 2px solid var(--gold); overflow: visible !important;">
+      <span class="participant-title">Institution & Department</span>
+      <div class="input-grid">
+        <div class="input-wrapper dropdown-container">
+          <i class="fas fa-university"></i>
+          <input id="common-college" placeholder="Search College Name" 
+                 onfocus="showColleges()" oninput="filterColleges()" autocomplete="off">
+          <div id="collegeList" class="dropdown-list"></div>
+        </div>
+        <div class="input-wrapper dropdown-container">
+          <i class="fas fa-graduation-cap"></i>
+          <input id="common-dept" placeholder="Search Department" 
+                 onfocus="showDepts()" oninput="filterDepts()" autocomplete="off">
+          <div id="deptList" class="dropdown-list"></div>
+        </div>
+      </div>
+    </div>`;
+  
+  const dates = Object.keys(selectedEvents);
+  dates.forEach((date, index)=>{
+    let ev=selectedEvents[date];
+    // Add "Same as" checkbox for the second date selected
+    let copyCheckbox = (index > 0) ? `<label style="display:block; margin-bottom:10px; font-size:0.7rem; color:var(--gold); cursor:pointer;"><input type="checkbox" onchange="copyData('${dates[0]}', '${date}', this)" style="width:auto; margin-right:5px;"> Same as ${dates[0]}</label>` : '';
+    
+    html+=`<div class="participant-section">
+      <h3 style="font-family:'Cinzel'; color:var(--gold); font-size:0.85rem; margin-bottom:10px; border-bottom:1px solid rgba(212,55,55,0.1); padding-bottom:5px;">${date} – ${ev.name}</h3>
+      ${copyCheckbox}
+      <div class="input-wrapper" style="margin-bottom:10px;"><i class="fas fa-envelope"></i><input type="email" id="${date}-email" placeholder="Email Address" required></div>
+      ${participantFields(ev, date)}
+    </div>`;
+  });
+  document.getElementById("dynamicForm").innerHTML=html;
 }
 
 function participantFields(ev, date){
-  let html = ""; 
-  let count = (ev.type === "individual") ? 1 : 4;
-  for(let i=1; i<=count; i++){
-    let isReq = (ev.type === "individual" || ev.type === "biz" || i <= 2) ? "required" : "";
-    // Added Team Lead tag for Participant 1
-    let leadTag = (i === 1) ? '<span style="background:var(--gold); color:var(--maroon); font-size:0.6rem; padding:2px 6px; border-radius:3px; margin-left:10px; font-weight:bold;">TEAM LEAD</span>' : '';
-    
-    html += `<div style="margin-bottom:12px;"><span class="participant-title" style="border:none; margin:0; font-size:0.7rem;">Participant ${i} ${leadTag}</span><div class="input-grid"><div class="input-wrapper"><i class="fas fa-user"></i><input id="${date}-p${i}-name" placeholder="Name" ${isReq}></div><div class="input-wrapper"><i class="fas fa-phone"></i><input type="tel" id="${date}-p${i}-phone" placeholder="Phone" maxlength="10" ${isReq} oninput="this.value = this.value.replace(/[^0-9]/g, '');"></div></div></div>`;
-  }
-  return html;
+  let html = ""; 
+  let count = (ev.type === "individual") ? 1 : 4;
+  for(let i=1; i<=count; i++){
+    let isReq = (ev.type === "individual" || ev.type === "biz" || i <= 2) ? "required" : "";
+    // Added Team Lead tag for Participant 1
+    let leadTag = (i === 1) ? '<span style="background:var(--gold); color:var(--maroon); font-size:0.6rem; padding:2px 6px; border-radius:3px; margin-left:10px; font-weight:bold;">TEAM LEAD</span>' : '';
+    
+    html += `<div style="margin-bottom:12px;"><span class="participant-title" style="border:none; margin:0; font-size:0.7rem;">Participant ${i} ${leadTag}</span><div class="input-grid"><div class="input-wrapper"><i class="fas fa-user"></i><input id="${date}-p${i}-name" placeholder="Name" ${isReq}></div><div class="input-wrapper"><i class="fas fa-phone"></i><input type="tel" id="${date}-p${i}-phone" placeholder="Phone" maxlength="10" ${isReq} oninput="this.value = this.value.replace(/[^0-9]/g, '');"></div></div></div>`;
+  }
+  return html;
 }
 
 // --- SEARCH DROPDOWN LOGIC ---
 function showColleges() {
-  const list = document.getElementById('collegeList');
-  if(list) {
-    list.style.display = 'block';
-    if(list.innerHTML === "") filterColleges();
-  }
+  const list = document.getElementById('collegeList');
+  if(list) {
+    list.style.display = 'block';
+    if(list.innerHTML === "") filterColleges();
+  }
 }
 
 function filterColleges() {
-  const input = document.getElementById('common-college');
-  const listEl = document.getElementById('collegeList');
-  const query = input.value.trim().toLowerCase();
-  
-  const filtered = collegeMasterList
-    .filter(c => c.toLowerCase().includes(query))
-    .sort((a, b) => {
-      const aStarts = a.toLowerCase().startsWith(query);
-      const bStarts = b.toLowerCase().startsWith(query);
-      if (aStarts && !bStarts) return -1;
-      if (!aStarts && bStarts) return 1;
-      return a.length - b.length;
-    });
+  const input = document.getElementById('common-college');
+  const listEl = document.getElementById('collegeList');
+  const query = input.value.trim().toLowerCase();
+  
+  const filtered = collegeMasterList
+    .filter(c => c.toLowerCase().includes(query))
+    .sort((a, b) => {
+      const aStarts = a.toLowerCase().startsWith(query);
+      const bStarts = b.toLowerCase().startsWith(query);
+      if (aStarts && !bStarts) return -1;
+      if (!aStarts && bStarts) return 1;
+      return a.length - b.length;
+    });
 
-  renderDropdown(filtered, input.value.trim());
+  renderDropdown(filtered, input.value.trim());
 }
 
 function renderDropdown(list, query) {
-  const container = document.getElementById('collegeList');
-  if(!container) return;
-  container.innerHTML = "";
-  
-  list.forEach(item => {
-    const div = document.createElement('div');
-    div.className = "dropdown-item";
-    // Clean text only, no icons
-    div.innerHTML = `<span>${item}</span>`;
-    div.onclick = () => selectCollege(item);
-    container.appendChild(div);
-  });
+  const container = document.getElementById('collegeList');
+  if(!container) return;
+  container.innerHTML = "";
+  
+  list.forEach(item => {
+    const div = document.createElement('div');
+    div.className = "dropdown-item";
+    // Clean text only, no icons
+    div.innerHTML = `<span>${item}</span>`;
+    div.onclick = () => selectCollege(item);
+    container.appendChild(div);
+  });
 
-  if (query.length > 2 && !collegeMasterList.some(c => c.toLowerCase() === query.toLowerCase())) {
-    const addBtn = document.createElement('div');
-    addBtn.className = "dropdown-item add-new-item";
-    // Removed icon from Add button too for consistency
-    addBtn.innerHTML = `ADD "${query}"`;
-    addBtn.onclick = () => addNewCollege(query);
-    container.appendChild(addBtn);
-  }
+  if (query.length > 2 && !collegeMasterList.some(c => c.toLowerCase() === query.toLowerCase())) {
+    const addBtn = document.createElement('div');
+    addBtn.className = "dropdown-item add-new-item";
+    // Removed icon from Add button too for consistency
+    addBtn.innerHTML = `ADD "${query}"`;
+    addBtn.onclick = () => addNewCollege(query);
+    container.appendChild(addBtn);
+  }
 }
 
 function selectCollege(name) {
-  document.getElementById('common-college').value = name;
-  document.getElementById('collegeList').style.display = 'none';
+  document.getElementById('common-college').value = name;
+  document.getElementById('collegeList').style.display = 'none';
 }
 
 function addNewCollege(name) {
-  if (!collegeMasterList.includes(name)) {
-    collegeMasterList.push(name);
-  }
-  selectCollege(name);
+  if (!collegeMasterList.includes(name)) {
+    collegeMasterList.push(name);
+  }
+  selectCollege(name);
 }
 
 // Close dropdown on outside click
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.dropdown-container')) {
-    const list = document.getElementById('collegeList');
-    if (list) list.style.display = 'none';
-  }
+  if (!e.target.closest('.dropdown-container')) {
+    const list = document.getElementById('collegeList');
+    if (list) list.style.display = 'none';
+  }
 });
 
 let deptMasterList = [
-    "B.Com (General)", "B.Com (Accounting & Finance)", "B.Com (Corporate Secretaryship)", "B.Com (Bank Management)", "B.Com (Information Systems Management)", "B.Com (Honours)",
-    "B.A. Economics", "B.A. English", "B.A. Tamil", "B.A. History", "B.A. Journalism", 
-    "B.Sc Computer Science", "B.Sc Mathematics", "B.Sc Physics", "B.Sc Chemistry", "B.Sc Statistics", "B.Sc Visual Communication", "B.Sc Biotechnology", "B.Sc Psychology",
-    "BCA (Computer Applications)", "BBA (Business Administration)",
-    "B.E. Computer Science", "B.E. ECE", "B.E. Mechanical", "B.E. Civil", "B.E. EEE", "B.E. Biomedical",
-    "B.Tech IT", "B.Tech AI & Data Science", "B.Tech Biotech",
+    "B.Com (General)", "B.Com (Accounting & Finance)", "B.Com (Corporate Secretaryship)", "B.Com (Bank Management)", "B.Com (Information Systems Management)", "B.Com (Honours)",
+    "B.A. Economics", "B.A. English", "B.A. Tamil", "B.A. History", "B.A. Journalism", 
+    "B.Sc Computer Science", "B.Sc Mathematics", "B.Sc Physics", "B.Sc Chemistry", "B.Sc Statistics", "B.Sc Visual Communication", "B.Sc Biotechnology", "B.Sc Psychology",
+    "BCA (Computer Applications)", "BBA (Business Administration)",
+    "B.E. Computer Science", "B.E. ECE", "B.E. Mechanical", "B.E. Civil", "B.E. EEE", "B.E. Biomedical",
+    "B.Tech IT", "B.Tech AI & Data Science", "B.Tech Biotech",
 ];
 
 // --- DEPARTMENT DROPDOWN FUNCTIONS ---
 function showDepts() {
-    const list = document.getElementById('deptList');
-    if(list) {
-        list.style.display = 'block';
-        if(list.innerHTML === "") renderDeptDropdown(deptMasterList, "");
-    }
+    const list = document.getElementById('deptList');
+    if(list) {
+        list.style.display = 'block';
+        if(list.innerHTML === "") renderDeptDropdown(deptMasterList, "");
+    }
 }
 
 function filterDepts() {
-    const input = document.getElementById('common-dept');
-    const query = input.value.trim().toLowerCase();
-    
-    // Normalize the query (remove dots and spaces)
-    const normalizedQuery = query.replace(/[^a-z0-9]/g, '');
+    const input = document.getElementById('common-dept');
+    const query = input.value.trim().toLowerCase();
+    
+    // Normalize the query (remove dots and spaces)
+    const normalizedQuery = query.replace(/[^a-z0-9]/g, '');
 
-    const filtered = deptMasterList
-        .filter(d => {
-            const normalizedDept = d.toLowerCase().replace(/[^a-z0-9]/g, '');
-            // Check if normalized version matches or if the original contains the keyword
-            return normalizedDept.includes(normalizedQuery) || d.toLowerCase().includes(query);
-        })
-        .sort((a, b) => {
-            const normA = a.toLowerCase().replace(/[^a-z0-9]/g, '');
-            const normB = b.toLowerCase().replace(/[^a-z0-9]/g, '');
-            
-            const aStarts = normA.startsWith(normalizedQuery);
-            const bStarts = normB.startsWith(normalizedQuery);
-            
-            // Relevance sorting
-            if (aStarts && !bStarts) return -1;
-            if (!aStarts && bStarts) return 1;
-            return a.length - b.length;
-        });
+    const filtered = deptMasterList
+        .filter(d => {
+            const normalizedDept = d.toLowerCase().replace(/[^a-z0-9]/g, '');
+            // Check if normalized version matches or if the original contains the keyword
+            return normalizedDept.includes(normalizedQuery) || d.toLowerCase().includes(query);
+        })
+        .sort((a, b) => {
+            const normA = a.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const normB = b.toLowerCase().replace(/[^a-z0-9]/g, '');
+            
+            const aStarts = normA.startsWith(normalizedQuery);
+            const bStarts = normB.startsWith(normalizedQuery);
+            
+            // Relevance sorting
+            if (aStarts && !bStarts) return -1;
+            if (!aStarts && bStarts) return 1;
+            return a.length - b.length;
+        });
 
-    renderDeptDropdown(filtered, input.value.trim());
+    renderDeptDropdown(filtered, input.value.trim());
 }
 
 function renderDeptDropdown(list, query) {
-    const container = document.getElementById('deptList');
-    if(!container) return;
-    container.innerHTML = "";
-    
-    // Auto-display logic
-    container.style.display = list.length > 0 || query.length > 1 ? 'block' : 'none';
+    const container = document.getElementById('deptList');
+    if(!container) return;
+    container.innerHTML = "";
+    
+    // Auto-display logic
+    container.style.display = list.length > 0 || query.length > 1 ? 'block' : 'none';
 
-    list.forEach(item => {
-        const div = document.createElement('div');
-        div.className = "dropdown-item";
-        div.innerHTML = `<span>${item}</span>`;
-        div.onclick = () => {
-            document.getElementById('common-dept').value = item;
-            container.style.display = 'none';
-        };
-        container.appendChild(div);
-    });
+    list.forEach(item => {
+        const div = document.createElement('div');
+        div.className = "dropdown-item";
+        div.innerHTML = `<span>${item}</span>`;
+        div.onclick = () => {
+            document.getElementById('common-dept').value = item;
+            container.style.display = 'none';
+        };
+        container.appendChild(div);
+    });
 
-    // Smart check for ADD option: only show if the exact phrase doesn't exist 
-    // even after ignoring case and dots
-    const normalizedQuery = query.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const exactExists = deptMasterList.some(d => d.toLowerCase().replace(/[^a-z0-9]/g, '') === normalizedQuery);
+    // Smart check for ADD option: only show if the exact phrase doesn't exist 
+    // even after ignoring case and dots
+    const normalizedQuery = query.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const exactExists = deptMasterList.some(d => d.toLowerCase().replace(/[^a-z0-9]/g, '') === normalizedQuery);
 
-    if (query.length > 1 && !exactExists) {
-        const addBtn = document.createElement('div');
-        addBtn.className = "dropdown-item add-new-item";
-        addBtn.innerHTML = `ADD "${query.toUpperCase()}"`;
-        addBtn.onclick = () => {
-            if (!deptMasterList.includes(query)) deptMasterList.push(query);
-            document.getElementById('common-dept').value = query;
-            container.style.display = 'none';
-        };
-        container.appendChild(addBtn);
-    }
+    if (query.length > 1 && !exactExists) {
+        const addBtn = document.createElement('div');
+        addBtn.className = "dropdown-item add-new-item";
+        addBtn.innerHTML = `ADD "${query.toUpperCase()}"`;
+        addBtn.onclick = () => {
+            if (!deptMasterList.includes(query)) deptMasterList.push(query);
+            document.getElementById('common-dept').value = query;
+            container.style.display = 'none';
+        };
+        container.appendChild(addBtn);
+    }
 }
 
 // Update the click listener to close BOTH dropdowns
 document.addEventListener('click', (e) => {
-    if (!e.target.closest('.dropdown-container')) {
-        const lists = document.querySelectorAll('.dropdown-list');
-        lists.forEach(list => list.style.display = 'none');
-    }
+    if (!e.target.closest('.dropdown-container')) {
+        const lists = document.querySelectorAll('.dropdown-list');
+        lists.forEach(list => list.style.display = 'none');
+    }
 });
 
 function copyData(sourceDate, targetDate, checkbox) {
-    if(checkbox.checked) {
-        // Copy Email
-        document.getElementById(`${targetDate}-email`).value = document.getElementById(`${sourceDate}-email`).value;
-        // Copy up to 4 participants
-        for(let i=1; i<=4; i++) {
-            let sName = document.getElementById(`${sourceDate}-p${i}-name`);
-            let sPhone = document.getElementById(`${sourceDate}-p${i}-phone`);
-            let tName = document.getElementById(`${targetDate}-p${i}-name`);
-            let tPhone = document.getElementById(`${targetDate}-p${i}-phone`);
-            
-            if(sName && tName) tName.value = sName.value;
-            if(sPhone && tPhone) tPhone.value = sPhone.value;
-        }
-    }
+    if(checkbox.checked) {
+        // Copy Email
+        document.getElementById(`${targetDate}-email`).value = document.getElementById(`${sourceDate}-email`).value;
+        // Copy up to 4 participants
+        for(let i=1; i<=4; i++) {
+            let sName = document.getElementById(`${sourceDate}-p${i}-name`);
+            let sPhone = document.getElementById(`${sourceDate}-p${i}-phone`);
+            let tName = document.getElementById(`${targetDate}-p${i}-name`);
+            let tPhone = document.getElementById(`${targetDate}-p${i}-phone`);
+            
+            if(sName && tName) tName.value = sName.value;
+            if(sPhone && tPhone) tPhone.value = sPhone.value;
+        }
+    }
 }
 
-  // Helper to read cookies
+  // Helper to read cookies
 function getCookie(name) {
-  let cookieArr = document.cookie.split(";");
-  for(let i = 0; i < cookieArr.length; i++) {
-    let cookiePair = cookieArr[i].split("=");
-    if(name == cookiePair[0].trim()) return decodeURIComponent(cookiePair[1]);
-  }
-  return null;
+  let cookieArr = document.cookie.split(";");
+  for(let i = 0; i < cookieArr.length; i++) {
+    let cookiePair = cookieArr[i].split("=");
+    if(name == cookiePair[0].trim()) return decodeURIComponent(cookiePair[1]);
+  }
+  return null;
 }
-  
+  
 // Update your submit button to call this instead of submitFinalRegistration directly
 async function validateAndSubmit() {
-    // 1. Check for Cookies (Browser-level block)
-    const dates = Object.keys(selectedEvents);
-    for (let date of dates) {
-        const cookieName = `echelon_reg_${date.replace(/\s/g, '')}`;
-        if (getCookie(cookieName)) {
-            alert(`Our records show you already registered for an event on ${date} from this device!`);
-            return;
-        }
-    }
+    // 1. Check for Cookies (Browser-level block)
+    const dates = Object.keys(selectedEvents);
+    for (let date of dates) {
+        const cookieName = `echelon_reg_${date.replace(/\s/g, '')}`;
+        if (getCookie(cookieName)) {
+            alert(`Our records show you already registered for an event on ${date} from this device!`);
+            return;
+        }
+    }
 
-    // 2. Check for Duplicate Phone Numbers within the team
-    const teamSections = document.querySelectorAll('.participant-section');
-    for (let section of teamSections) {
-        const phoneInputs = section.querySelectorAll('input[type="tel"]');
-        const phoneValues = [];
-        
-        for (let p of phoneInputs) {
-            const val = p.value.trim();
-            if (val) {
-                if (phoneValues.includes(val)) {
-                    alert("Each participant in a team must have a unique phone number!");
-                    p.focus();
-                    return;
-                }
-                phoneValues.push(val);
-            }
-        }
-    }
+    // 2. Check for Duplicate Phone Numbers within the team
+    const teamSections = document.querySelectorAll('.participant-section');
+    for (let section of teamSections) {
+        const phoneInputs = section.querySelectorAll('input[type="tel"]');
+        const phoneValues = [];
+        
+        for (let p of phoneInputs) {
+            const val = p.value.trim();
+            if (val) {
+                if (phoneValues.includes(val)) {
+                    alert("Each participant in a team must have a unique phone number!");
+                    p.focus();
+                    return;
+                }
+                phoneValues.push(val);
+            }
+        }
+    }
 
-    // 3. Standard Format Validation
-    const allPhones = document.querySelectorAll('input[type="tel"]');
-    for(let p of allPhones) {
-        if(p.hasAttribute('required') && !/^[6-9]\d{9}$/.test(p.value)) {
-            alert("Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.");
-            p.focus();
-            return;
-        }
-    }
-    
-    // If all checks pass, proceed
-    submitFinalRegistration();
+    // 3. Standard Format Validation
+    const allPhones = document.querySelectorAll('input[type="tel"]');
+    for(let p of allPhones) {
+        if(p.hasAttribute('required') && !/^[6-9]\d{9}$/.test(p.value)) {
+            alert("Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.");
+            p.focus();
+            return;
+        }
+    }
+    
+    // If all checks pass, proceed
+    submitFinalRegistration();
 }
 	
 async function submitFinalRegistration(){
-  if(!document.getElementById("declaration").checked){ alert("Please confirm details."); return; }
-  
-  const college = document.getElementById('common-college').value.trim();
-  const dept = document.getElementById('common-dept').value.trim();
-  if(!college || !dept){ alert("College and Department names are required."); return; }
+  if(!document.getElementById("declaration").checked){ alert("Please confirm details."); return; }
+  
+  const college = document.getElementById('common-college').value.trim();
+  const dept = document.getElementById('common-dept').value.trim();
+  if(!college || !dept){ alert("College and Department names are required."); return; }
 
-  const btn = document.getElementById("submitBtn");
-  const originalText = btn.innerText;
-  btn.disabled = true; 
-  btn.innerText = "Processing Registration...";
+  const btn = document.getElementById("submitBtn");
+  const originalText = btn.innerText;
+  btn.disabled = true; 
+  btn.innerText = "Processing Registration...";
 
-  // BUILD THE COMPLETE DATA PAYLOAD
-  const payload = {
-    selectedEvents: Object.keys(selectedEvents).map(date => {
-      const ev = selectedEvents[date];
-      const parts = [];
-      // Determine max participants based on event type
-      const maxParticipants = (ev.type === "individual") ? 1 : 4;
-      
-      for(let i=1; i <= maxParticipants; i++){
-        let nameEl = document.getElementById(`${date}-p${i}-name`);
-        let phoneEl = document.getElementById(`${date}-p${i}-phone`);
-        // Only push if the name field actually has content
-        if(nameEl && nameEl.value.trim()) {
-          parts.push({
-            name: nameEl.value.trim(), 
-            phone: phoneEl.value.trim()
-          });
-        }
-      }
-      
-      return { 
-        date: date, 
-        eventName: ev.name, 
-        email: document.getElementById(`${date}-email`).value.trim(), 
-        college: college, 
-        department: dept, 
-        participants: parts 
-      };
-    }),
-    // If you have a transaction ID field in your HTML, capture it here:
-    transactionId: document.getElementById('transaction-id') ? document.getElementById('transaction-id').value.trim() : "DIRECT_ENTRY"
-  };
+  // BUILD THE COMPLETE DATA PAYLOAD
+  const payload = {
+    selectedEvents: Object.keys(selectedEvents).map(date => {
+      const ev = selectedEvents[date];
+      const parts = [];
+      // Determine max participants based on event type
+      const maxParticipants = (ev.type === "individual") ? 1 : 4;
+      
+      for(let i=1; i <= maxParticipants; i++){
+        let nameEl = document.getElementById(`${date}-p${i}-name`);
+        let phoneEl = document.getElementById(`${date}-p${i}-phone`);
+        // Only push if the name field actually has content
+        if(nameEl && nameEl.value.trim()) {
+          parts.push({
+            name: nameEl.value.trim(), 
+            phone: phoneEl.value.trim()
+          });
+        }
+      }
+      
+      return { 
+        date: date, 
+        eventName: ev.name, 
+        email: document.getElementById(`${date}-email`).value.trim(), 
+        college: college, 
+        department: dept, 
+        participants: parts 
+      };
+    }),
+    // If you have a transaction ID field in your HTML, capture it here:
+    transactionId: document.getElementById('transaction-id') ? document.getElementById('transaction-id').value.trim() : "DIRECT_ENTRY"
+  };
 
-  try {
-    const response = await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
-    
-    const result = await response.text();
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+    
+    const result = await response.text();
 
-    if (result.trim() === "Success") {
-      showSuccess();
-    } else {
-      // If result includes "Error", show the Iron-Clad message from Backend
-      alert("⚠️ REGISTRATION FAILED:\n\n" + result.replace("Error: ", ""));
-      btn.disabled = false;
-      btn.innerText = originalText;
-    }
-  } catch(e) {
-    console.error(e);
-    alert("Connection Error: The server is busy or your internet is unstable. Please try again.");
-    btn.disabled = false;
-    btn.innerText = originalText;
-  }
+    if (result.trim() === "Success") {
+      showSuccess();
+    } else {
+      // If result includes "Error", show the Iron-Clad message from Backend
+      alert("⚠️ REGISTRATION FAILED:\n\n" + result.replace("Error: ", ""));
+      btn.disabled = false;
+      btn.innerText = originalText;
+    }
+  } catch(e) {
+    console.error(e);
+    alert("Connection Error: The server is busy or your internet is unstable. Please try again.");
+    btn.disabled = false;
+    btn.innerText = originalText;
+  }
 }
 
 function showSuccess(){
-  // SET COOKIES FOR THE SELECTED DATES
-  const dates = Object.keys(selectedEvents);
-  dates.forEach(date => {
-      const cookieName = `echelon_reg_${date.replace(/\s/g, '')}`;
-      // Cookie expires in 30 days
-      document.cookie = `${cookieName}=true; max-age=${30*24*60*60}; path=/`;
-  });
+  // SET COOKIES FOR THE SELECTED DATES
+  const dates = Object.keys(selectedEvents);
+  dates.forEach(date => {
+      const cookieName = `echelon_reg_${date.replace(/\s/g, '')}`;
+      // Cookie expires in 30 days
+      document.cookie = `${cookieName}=true; max-age=${30*24*60*60}; path=/`;
+  });
 
-  document.querySelector(".container").innerHTML = `
-    <div style="text-align:center; padding:30px;">
-      <i class="fas fa-check-circle" style="font-size:3rem; color:var(--gold); margin-bottom:15px;"></i>
-      <h2 style="color:var(--gold); font-family:'Cinzel'; font-size:1.2rem;">Registration Sent!</h2>
-      <p style="font-size:0.85rem; margin-bottom:20px;">YOUR SEATS WILL BE CONFIRMED IN 24-48 HOURS</p>
-      <p style="font-size:0.8rem; color:#aaa;">Please check your email for the official <b>Applied ID (A-Series)</b>.</p>
-      <button onclick="window.location.href='index.html'" style="width:auto; padding:10px 30px; margin-top:20px;">Return Home</button>
-    </div>`;
+  document.querySelector(".container").innerHTML = `
+    <div style="text-align:center; padding:30px;">
+      <i class="fas fa-check-circle" style="font-size:3rem; color:var(--gold); margin-bottom:15px;"></i>
+      <h2 style="color:var(--gold); font-family:'Cinzel'; font-size:1.2rem;">Registration Sent!</h2>
+      <p style="font-size:0.85rem; margin-bottom:20px;">YOUR SEATS WILL BE CONFIRMED IN 24-48 HOURS</p>
+      <p style="font-size:0.8rem; color:#aaa;">Please check your email for the official <b>Applied ID (A-Series)</b>.</p>
+      <button onclick="window.location.href='index.html'" style="width:auto; padding:10px 30px; margin-top:20px;">Return Home</button>
+    </div>`;
 }
 
 function nextStep(step){ document.querySelectorAll(".step").forEach(s=>s.classList.remove("active")); document.getElementById("step"+step).classList.add("active"); updateProgress(step); window.scrollTo({top: 0, behavior: 'smooth'}); }
@@ -788,3 +856,11 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 
 
 	
+
+
+
+
+
+
+
+
