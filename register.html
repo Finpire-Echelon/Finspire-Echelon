@@ -718,16 +718,15 @@ async function submitFinalRegistration(){
 
   // BUILD THE COMPLETE DATA PAYLOAD
   const payload = {
+    action: "register", // Add this so the backend knows this is a registration
     selectedEvents: Object.keys(selectedEvents).map(date => {
       const ev = selectedEvents[date];
       const parts = [];
-      // Determine max participants based on event type
       const maxParticipants = (ev.type === "individual") ? 1 : 4;
       
       for(let i=1; i <= maxParticipants; i++){
         let nameEl = document.getElementById(`${date}-p${i}-name`);
         let phoneEl = document.getElementById(`${date}-p${i}-phone`);
-        // Only push if the name field actually has content
         if(nameEl && nameEl.value.trim()) {
           parts.push({
             name: nameEl.value.trim(), 
@@ -744,11 +743,9 @@ async function submitFinalRegistration(){
         department: dept, 
         participants: parts 
       };
-    }),
-    // If you have a transaction ID field in your HTML, capture it here:
-    transactionId: document.getElementById('transaction-id') ? document.getElementById('transaction-id').value.trim() : "DIRECT_ENTRY"
+    })
   };
-
+	
   try {
     const response = await fetch(SCRIPT_URL, {
       method: "POST",
@@ -832,13 +829,7 @@ function setAdminSession() {
     sessionStorage.setItem("adminActive", "true");
 }
 
-// Add this to the window.onload of both admin.html and errors.html
-window.onload = function() {
-    if (sessionStorage.getItem("adminActive") !== "true") {
-        alert("Unauthorized Access. Please login via the main portal.");
-        window.location.href = "index.html"; // Redirect to home if no session
-    }
-};
+
 
 function goToErrors() {
     // Session is saved in sessionStorage, so it persists across tabs/navigation
@@ -855,6 +846,7 @@ function logout() {
 
 
 	
+
 
 
 
