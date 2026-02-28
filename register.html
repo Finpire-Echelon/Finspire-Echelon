@@ -226,35 +226,6 @@ button:disabled { opacity: 0.5; cursor: wait; }
   </button>
 </div>
 
-<div style="text-align: center; margin-top: 10px;">
-  <button type="button" style="width: auto; padding: 8px 20px; border-color: var(--error); color: var(--error); font-size: 0.75rem; background: transparent;" onclick="openIssueModal()">
-      <i class="fas fa-exclamation-triangle"></i> Facing Issues? Report Here
-  </button>
-</div>
-
-<div id="issueModal" class="modal">
-  <div class="modal-content" style="max-width: 400px;">
-    <span class="close-modal" onclick="closeIssueModal()">×</span>
-    <h2 style="text-align:center; font-family:'Cinzel'; color: var(--gold);">REPORT ISSUE</h2>
-    <p style="font-size: 0.75rem; text-align: center; margin-bottom: 20px;">Our team will contact you shortly.</p>
-    
-    <div class="input-wrapper" style="margin-bottom: 15px;">
-      <i class="fas fa-user"></i>
-      <input id="issue-name" placeholder="Your Name">
-    </div>
-    <div class="input-wrapper" style="margin-bottom: 15px;">
-      <i class="fas fa-phone"></i>
-      <input id="issue-phone" placeholder="Phone Number" maxlength="10">
-    </div>
-    <div class="input-wrapper" style="margin-bottom: 15px;">
-      <i class="fas fa-comment-dots" style="top: 15px; transform: none;"></i>
-      <textarea id="issue-desc" placeholder="Describe the problem..." style="width: 100%; padding: 12px 12px 12px 45px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3); background: var(--input-bg); color: var(--cream); height: 100px; font-family: 'Montserrat';"></textarea>
-    </div>
-
-    <button id="issueSubmitBtn" onclick="submitIssue()" class="modal-action-btn" style="background: var(--error); color: white;">SEND REPORT</button>
-  </div>
-</div>
-
 <div id="helpModal" class="modal">
   <div class="modal-content">
     <span class="close-modal" onclick="closeHelp()">×</span>
@@ -432,45 +403,6 @@ function selectEvent(date, ev, el){
   }
 }
 
-function openIssueModal() { document.getElementById("issueModal").style.display = "block"; }
-function closeIssueModal() { document.getElementById("issueModal").style.display = "none"; }
-
-async function submitIssue() {
-  const name = document.getElementById("issue-name").value.trim();
-  const phone = document.getElementById("issue-phone").value.trim();
-  const desc = document.getElementById("issue-desc").value.trim();
-  const btn = document.getElementById("issueSubmitBtn");
-
-  if(!name || !phone || !desc) { alert("Please fill all fields."); return; }
-
-  btn.disabled = true;
-  btn.innerText = "Sending...";
-
-  try {
-    const response = await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "reportIssue",
-        name: name,
-        phone: phone,
-        description: desc
-      })
-    });
-    
-    const result = await response.text();
-    if(result === "Success") {
-      alert("Issue reported! Our team will call you if needed.");
-      closeIssueModal();
-    } else {
-      alert("Failed to send report. Please try again.");
-    }
-  } catch(e) {
-    alert("Check your internet connection.");
-  } finally {
-    btn.disabled = false;
-    btn.innerText = "SEND REPORT";
-  }
-}
 
 function buildParticipantForms(){
   let html = `
@@ -856,6 +788,7 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 
 
 	
+
 
 
 
