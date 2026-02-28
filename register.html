@@ -650,7 +650,12 @@ async function validateAndSubmit() {
     for (let date of dates) {
         const cookieName = `echelon_reg_${date.replace(/\s/g, '')}`;
         if (getCookie(cookieName)) {
-            alert(`Our records show you already registered for an event on ${date} from this device!`);
+            const msg = `Our records show you already registered for an event on ${date} from this device!`;
+            
+            // --- ADDED CHANGE: SNITCH ON COOKIE BLOCK ---
+            logErrorToAdmin(msg, "Frontend", "Browser Cookie Check");
+            
+            alert(msg);
             return;
         }
     }
@@ -665,7 +670,12 @@ async function validateAndSubmit() {
             const val = p.value.trim();
             if (val) {
                 if (phoneValues.includes(val)) {
-                    alert("Each participant in a team must have a unique phone number!");
+                    const msg = "Each participant in a team must have a unique phone number!";
+                    
+                    // --- ADDED CHANGE: SNITCH ON INTERNAL TEAM DUPLICATE ---
+                    logErrorToAdmin(msg + " (Duplicate: " + val + ")", "Frontend", "Internal Team Validation");
+                    
+                    alert(msg);
                     p.focus();
                     return;
                 }
@@ -678,7 +688,12 @@ async function validateAndSubmit() {
     const allPhones = document.querySelectorAll('input[type="tel"]');
     for(let p of allPhones) {
         if(p.hasAttribute('required') && !/^[6-9]\d{9}$/.test(p.value)) {
-            alert("Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.");
+            const msg = "Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.";
+            
+            // --- ADDED CHANGE: SNITCH ON INVALID PHONE FORMAT ---
+            logErrorToAdmin(msg + " (Input: " + p.value + ")", "Frontend", "Format Validation");
+            
+            alert(msg);
             p.focus();
             return;
         }
@@ -687,6 +702,7 @@ async function validateAndSubmit() {
     // If all checks pass, proceed
     submitFinalRegistration();
 }
+	
 	
 async function submitFinalRegistration(){
   if(!document.getElementById("declaration").checked){ alert("Please confirm details."); return; }
@@ -744,12 +760,17 @@ async function submitFinalRegistration(){
     if (result.trim() === "Success") {
       showSuccess();
     } else {
-      // If result includes "Error", show the Iron-Clad message from Backend
+      // --- ADDED CHANGE 1: SNITCH ON BACKEND ERROR ---
+      logErrorToAdmin(result.replace("Error: ", ""), "Backend Logic", "Database Conflict", payload);
+      
       alert("⚠️ REGISTRATION FAILED:\n\n" + result.replace("Error: ", ""));
       btn.disabled = false;
       btn.innerText = originalText;
     }
   } catch(e) {
+    // --- ADDED CHANGE 2: SNITCH ON NETWORK ERROR ---
+    logErrorToAdmin(e.toString(), "Network/Script Crash", "submitFinalRegistration", payload);
+    
     console.error(e);
     alert("Connection Error: The server is busy or your internet is unstable. Please try again.");
     btn.disabled = false;
@@ -757,6 +778,28 @@ async function submitFinalRegistration(){
   }
 }
 
+async function logErrorToAdmin(message, type, block, payload = null) {
+    try {
+        const firstDate = Object.keys(selectedEvents)[0];
+        const leadName = document.getElementById(`${firstDate}-p1-name`) ? document.getElementById(`${firstDate}-p1-name`).value : "Unknown";
+        const college = document.getElementById('common-college') ? document.getElementById('common-college').value : "Unknown";
+
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            mode: 'no-cors', // Ensures it sends even if there's a CORS issue
+            body: JSON.stringify({
+                action: "reportError",
+                leadName: leadName,
+                college: college,
+                message: message,
+                type: type,
+                block: block,
+                rawData: payload ? JSON.stringify(payload) : "N/A"
+            })
+        });
+    } catch (e) { console.error("Error Logging Failed", e); }
+}
+	
 function showSuccess(){
   // SET COOKIES FOR THE SELECTED DATES
   const dates = Object.keys(selectedEvents);
@@ -782,12 +825,37 @@ function updateProgress(step){ document.querySelectorAll(".progress div").forEac
 
 function openHelp(){ document.getElementById("helpModal").style.display = "block"; }
 function closeHelp(){ document.getElementById("helpModal").style.display = "none"; }
+// --- SESSION MANAGEMENT ---
+
+// Call this when you successfully log in to admin.html
+function setAdminSession() {
+    sessionStorage.setItem("adminActive", "true");
+}
+
+// Add this to the window.onload of both admin.html and errors.html
+window.onload = function() {
+    if (sessionStorage.getItem("adminActive") !== "true") {
+        alert("Unauthorized Access. Please login via the main portal.");
+        window.location.href = "index.html"; // Redirect to home if no session
+    }
+};
+
+function goToErrors() {
+    // Session is saved in sessionStorage, so it persists across tabs/navigation
+    window.location.href = "errors.html"; 
+}
+
+function logout() {
+    sessionStorage.removeItem("adminActive");
+    window.location.href = "index.html";
+}
 </script>
 </body>
 </html>
 
 
 	
+
 
 
 
