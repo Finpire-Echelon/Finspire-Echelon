@@ -266,13 +266,13 @@ const EVENT_CONFIG = {
 
 const eventData = {
   "March 10": [
-    {name:"Make or Break", type:"team", sizeRule: "Team: 2–4 Members"},
-    {name:"Quizpreneur", type:"team", sizeRule: "Team: 2–4 Members"},
-    {name:"Behind the Brand", type:"team", sizeRule: "Team: 2–4 Members"}
+    {name:"Make or Break", type:"team", sizeRule: "1–4 Members"},
+    {name:"Quizpreneur", type:"team", sizeRule: "2–4 Members (Min. 2 Required)"},
+    {name:"Behind the Brand", type:"team", sizeRule: "1–4 Members"}
   ],
   "March 11": [
-    {name:"Biz Auction", type:"biz", sizeRule: "Team: Exactly 4 Members"},
-    {name:"Decision Table", type:"team", sizeRule: "Team: 2–4 Members"},
+    {name:"Biz Auction", type:"biz", sizeRule: "2–4 Members (Min. 2 Required)"}, // Updated this
+    {name:"Decision Table", type:"team", sizeRule: "1–4 Members"},
     {name:"Identity Unleashed", type:"individual", sizeRule: "Individual (1 Participant)"}
   ]
 };
@@ -442,10 +442,14 @@ function buildParticipantForms(){
 
 function participantFields(ev, date){
   let html = ""; 
-  let count = (ev.type === "individual") ? 1 : 4;
+  // 1. Both Quiz and Biz now show 4 rows. Others show 4 (team) or 1 (individual).
+  let count = (ev.name === "Quizpreneur" || ev.type === "biz") ? 4 : (ev.type === "individual" ? 1 : 4);
+  
   for(let i=1; i<=count; i++){
-    let isReq = (ev.type === "individual" || ev.type === "biz" || i <= 2) ? "required" : "";
-    // Added Team Lead tag for Participant 1
+    // 2. Participant 1 & 2 are REQUIRED for Quizpreneur and Biz Auction.
+    // Participant 1 is REQUIRED for everything else.
+    let isReq = (i === 1 || ((ev.type === "biz" || ev.name === "Quizpreneur") && i === 2)) ? "required" : "";
+    
     let leadTag = (i === 1) ? '<span style="background:var(--gold); color:var(--maroon); font-size:0.6rem; padding:2px 6px; border-radius:3px; margin-left:10px; font-weight:bold;">TEAM LEAD</span>' : '';
     
     html += `<div style="margin-bottom:12px;"><span class="participant-title" style="border:none; margin:0; font-size:0.7rem;">Participant ${i} ${leadTag}</span><div class="input-grid"><div class="input-wrapper"><i class="fas fa-user"></i><input id="${date}-p${i}-name" placeholder="Name" ${isReq}></div><div class="input-wrapper"><i class="fas fa-phone"></i><input type="tel" id="${date}-p${i}-phone" placeholder="Phone" maxlength="10" ${isReq} oninput="this.value = this.value.replace(/[^0-9]/g, '');"></div></div></div>`;
@@ -645,27 +649,62 @@ function getCookie(name) {
   
 // Update your submit button to call this instead of submitFinalRegistration directly
 async function validateAndSubmit() {
-    // 1. Check for Cookies (Browser-level block)
+    // 1. Check College & Department First
+    const college = document.getElementById('common-college');
+    const dept = document.getElementById('common-dept');
+    
+    if (!college.value.trim()) {
+        alert("MISSING INSTITUTION:\n\nPlease search and select your University/College name.");
+        college.focus();
+        return;
+    }
+    if (!dept.value.trim()) {
+        alert("MISSING DEPARTMENT:\n\nPlease search and select your Department.");
+        dept.focus();
+        return;
+    }
+
+    // 2. Check for Cookies (Browser-level block)
     const dates = Object.keys(selectedEvents);
     for (let date of dates) {
         const cookieName = `echelon_reg_${date.replace(/\s/g, '')}`;
         if (getCookie(cookieName)) {
-            alert(`Our records show you already registered for an event on ${date} from this device!`);
+            alert(`DUPLICATE ENTRY:\nYou have already registered for ${date} from this device!`);
             return;
         }
     }
 
-    // 2. Check for Duplicate Phone Numbers within the team
+    // 3. Check ALL required fields with Exact Messaging
+    const requiredInputs = document.querySelectorAll('#dynamicForm input[required]');
+    for (let input of requiredInputs) {
+        if (!input.value.trim()) {
+            const section = input.closest('.participant-section');
+            const sectionName = section ? section.querySelector('h3').innerText : "this event";
+            
+            // This pulls the specific placeholder (e.g., "Participant 2 Name")
+            const fieldIdentity = input.placeholder || "This field";
+            
+            alert(`ACTION REQUIRED:\n\n${fieldIdentity} is necessary for ${sectionName}. Kindly fill it to proceed.`);
+            input.focus();
+            return;
+        }
+    }
+
+    // 4. Phone Format & Duplicate Checks
     const teamSections = document.querySelectorAll('.participant-section');
     for (let section of teamSections) {
         const phoneInputs = section.querySelectorAll('input[type="tel"]');
         const phoneValues = [];
-        
         for (let p of phoneInputs) {
             const val = p.value.trim();
             if (val) {
+                if (!/^[6-9]\d{9}$/.test(val)) {
+                    alert(`INVALID PHONE:\n\nThe phone number for ${p.placeholder} must be a 10-digit number starting with 6-9.`);
+                    p.focus();
+                    return;
+                }
                 if (phoneValues.includes(val)) {
-                    alert("Each participant in a team must have a unique phone number!");
+                    alert("DUPLICATE PHONE:\n\nEach participant in a team must have a unique phone number!");
                     p.focus();
                     return;
                 }
@@ -673,18 +712,13 @@ async function validateAndSubmit() {
             }
         }
     }
-
-    // 3. Standard Format Validation
-    const allPhones = document.querySelectorAll('input[type="tel"]');
-    for(let p of allPhones) {
-        if(p.hasAttribute('required') && !/^[6-9]\d{9}$/.test(p.value)) {
-            alert("Please enter a valid 10-digit Indian phone number starting with 6, 7, 8, or 9.");
-            p.focus();
-            return;
-        }
-    }
     
-    // If all checks pass, proceed
+    // 5. Declaration Check
+    if(!document.getElementById("declaration").checked){ 
+        alert("Please check the confirmation box at the bottom."); 
+        return; 
+    }
+
     submitFinalRegistration();
 }
 	
@@ -706,7 +740,7 @@ async function submitFinalRegistration(){
       const ev = selectedEvents[date];
       const parts = [];
       // Determine max participants based on event type
-      const maxParticipants = (ev.type === "individual") ? 1 : 4;
+      const maxParticipants = (ev.name === "Quizpreneur" || ev.type === "biz") ? 4 : (ev.type === "individual" ? 1 : 4);
       
       for(let i=1; i <= maxParticipants; i++){
         let nameEl = document.getElementById(`${date}-p${i}-name`);
@@ -788,7 +822,6 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 
 
 	
-
 
 
 
