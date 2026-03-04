@@ -127,28 +127,37 @@
       }
     }
 
-    function processInsights(rows) {
+   function processInsights(rows) {
       const eventStats = {}, velocity = {}, colleges = {}, dayStats = { "March 10": 0, "March 11": 0 };
 
-      // Start from i=1 to skip headers
+      // Skip header row
       for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
-        if (!r[0] || !r[3]) continue; // Skip broken rows
+        if (!r[0] || !r[3]) continue; 
 
-        const day = (r[2] || "").replace(/'/g, "").trim();
+        // 1. Clean the Event Day (Column C)
+        const dayRaw = String(r[2] || "").replace(/'/g, "").trim();
         const event = r[3];
         const status = String(r[13] || "PENDING").toUpperCase();
-        const subDate = r[0].split(' ')[0];
-        const college = r[5] || "Unknown Institution";
+        
+        // 2. Clean the Registration Date (Column A) for Velocity
+        // Handles "DD/MM/YYYY HH:MM:SS" or Date objects
+        let subDate = "Unknown";
+        if (r[0]) {
+            const datePart = String(r[0]).split(',')[0].split(' ')[0];
+            subDate = datePart;
+        }
 
-        // 1. Funnel
+        const college = (r[5] || "Other").trim();
+
+        // 1. Funnel Logic
         if(!eventStats[event]) eventStats[event] = { applied: 0, confirmed: 0 };
         eventStats[event].applied++;
         if(status === "APPROVED") eventStats[event].confirmed++;
 
-        // 2. Day Split
-        if(day.includes("10")) dayStats["March 10"]++;
-        else if(day.includes("11")) dayStats["March 11"]++;
+        // 2. Day Split Logic
+        if(dayRaw.includes("10")) dayStats["March 10"]++;
+        else if(dayRaw.includes("11")) dayStats["March 11"]++;
 
         // 3. Velocity & Colleges
         velocity[subDate] = (velocity[subDate] || 0) + 1;
@@ -160,6 +169,7 @@
       renderColleges(colleges);
       renderDaySplit(dayStats);
     }
+
 
     function renderDaySplit(data) {
       new Chart(document.getElementById('dayPieChart'), {
@@ -194,51 +204,67 @@
     }
 
     function renderVelocity(data) {
-      const labels = Object.keys(data).sort();
+      // Sort dates chronologically so the line doesn't zig-zag
+      const labels = Object.keys(data).sort((a, b) => {
+          return new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-'));
+      });
+      
       new Chart(document.getElementById('velocityLineChart'), {
         type: 'line',
         data: {
           labels: labels,
           datasets: [{
+            label: 'Registrations',
             data: labels.map(l => data[l]),
             borderColor: '#D4AF37',
             backgroundColor: 'rgba(212, 175, 55, 0.1)',
             fill: true,
-            tension: 0.4,
-            pointRadius: 2
+            tension: 0.3,
+            pointRadius: 3,
+            pointBackgroundColor: '#D4AF37'
           }]
         },
         options: { 
           maintainAspectRatio: false, 
           plugins: { legend: { display: false } }, 
           scales: { 
-            x: { grid: { display: false }, ticks: { color: '#666', font: { size: 9 } } }, 
-            y: { grid: { color: '#222' }, ticks: { color: '#666', font: { size: 9 } } } 
+            x: { grid: { display: false }, ticks: { color: '#666', font: { size: 8 } } }, 
+            y: { grid: { color: '#222' }, ticks: { stepSize: 1, color: '#666', font: { size: 9 } } } 
           } 
         }
       });
     }
 
+
+    // UPDATED: Better Mobile Legend for Colleges
     function renderColleges(data) {
       const sorted = Object.entries(data).sort((a,b) => b[1]-a[1]).slice(0, 5);
       new Chart(document.getElementById('collegePieChart'), {
         type: 'pie',
         data: {
-          labels: sorted.map(s => s[0].length > 15 ? s[0].substring(0,15)+'...' : s[0]),
+          labels: sorted.map(s => s[0].length > 12 ? s[0].substring(0,12)+'..' : s[0]),
           datasets: [{
             data: sorted.map(s => s[1]),
-            backgroundColor: ['#D4AF37', '#4B0036', '#630048', '#8E0067', '#2D0021'],
-            borderWidth: 0
+            backgroundColor: ['#D4AF37', '#4B0036', '#721c24', '#a71d2a', '#2D0021'],
+            borderWidth: 1,
+            borderColor: '#1a1a1a'
           }]
         },
-        options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#888', font: { size: 9 }, boxWidth: 10 } } } }
+        options: { 
+            maintainAspectRatio: false, 
+            plugins: { 
+                legend: { 
+                    position: window.innerWidth < 600 ? 'bottom' : 'right', 
+                    labels: { color: '#888', font: { size: 9 }, boxWidth: 10 } 
+                } 
+            } 
+        }
       });
     }
+
   </script>
 </body>
 </html>
-
-
 
 
 
