@@ -4,473 +4,681 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ECHELON '26 | COMMAND CENTER</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-    :root { --gold: #D4AF37; --maroon: #4B0036; --bg: #0f0f0f; --card: #1a1a1a; --text: #f5f1e6; }
-    body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; margin: 0; overflow-x: hidden; }
+    :root { --gold: #D4AF37; --maroon: #4B0036; --bg: #0f0f0f; --card: #1a1a1a; --text: #f5f1e6; --success: #28a745; --danger: #dc3545; }
+    body { background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; margin: 0; overflow-x: hidden; padding-bottom: 80px; }
+    * { box-sizing: border-box; }
 
-    /* Login Logic */
-    .btn-loading { pointer-events: none; opacity: 0.7; color: transparent !important; }
-    .btn-loading::after {
-      content: ""; position: absolute; width: 20px; height: 20px; top: 50%; left: 50%; margin: -10px 0 0 -10px;
-      border: 3px solid rgba(212,175,55,0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Login UI */
+    #login-screen { position: fixed; inset: 0; background: radial-gradient(circle, var(--maroon) 0%, #000 100%); z-index: 4000; display: flex; align-items: center; justify-content: center; }
+    .login-box { background: var(--card); padding: 40px; border-radius: 15px; border: 2px solid var(--gold); text-align: center; width: 90%; max-width: 400px; box-shadow: 0 0 30px rgba(212,175,55,0.2); }
+    .login-box input { display: block; width: 100%; padding: 12px; margin: 20px 0; background: #000; color: #fff; border: 1px solid var(--gold); border-radius: 5px; text-align: center; font-family: 'Montserrat'; }
+    .login-box button { background: var(--gold); color: var(--maroon); border: none; padding: 12px; cursor: pointer; font-weight: bold; border-radius: 5px; font-family: 'Cinzel'; width: 100%; transition: 0.3s; font-size: 1rem; }
+    .login-box button:hover { letter-spacing: 2px; background: #fff; }
+    .btn-loading { pointer-events: none; opacity: 0.5; }
 
-    #login-screen { position: fixed; inset: 0; background: var(--maroon); z-index: 4000; display: flex; align-items: center; justify-content: center; }
-    .login-box { background: var(--card); padding: 40px; border-radius: 15px; border: 2px solid var(--gold); text-align: center; width: 90%; max-width: 400px; }
-    .login-box input { display: block; width: 100%; padding: 12px; margin: 20px 0; background: #000; color: #fff; border: 1px solid var(--gold); border-radius: 5px; text-align: center; box-sizing: border-box; }
-    .login-box button { background: var(--gold); color: var(--maroon); border: none; padding: 12px 40px; cursor: pointer; font-weight: bold; border-radius: 5px; font-family: 'Cinzel'; width: 100%; position: relative; }
+    /* Core UI & Header */
+    header { background: var(--maroon); padding: 15px 30px; border-bottom: 3px solid var(--gold); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; flex-wrap: wrap; gap: 15px; }
+    .header-actions { display: flex; gap: 10px; }
+    .btn { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 8px 15px; font-size: 0.75rem; border-radius: 4px; font-weight: 700; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 5px; font-family: 'Cinzel'; text-decoration: none; }
+    .btn:hover:not(:disabled) { background: var(--gold); color: var(--maroon); }
+    .btn.filled { background: var(--gold); color: var(--maroon); }
+    .btn.danger { border-color: var(--danger); color: var(--danger); }
+    .btn.danger:hover:not(:disabled) { background: var(--danger); color: #fff; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    #admin-content { display: none; }
-    header { background: var(--maroon); padding: 15px 30px; border-bottom: 3px solid var(--gold); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-    
-    .admin-presence { 
-      width: 32px; height: 32px; border: 1.5px solid var(--gold); border-radius: 50%; 
-      display: flex; align-items: center; justify-content: center; 
-      background: var(--card); color: var(--gold); font-family: 'Cinzel'; 
-      font-size: 0.7rem; font-weight: bold; cursor: pointer; position: relative;
-    }
-    .admin-presence:hover::after {
-      content: attr(data-tooltip); position: absolute; top: 40px; left: 0; 
-      background: var(--card); border: 1px solid var(--gold); padding: 8px; 
-      border-radius: 4px; font-size: 0.65rem; white-space: nowrap; z-index: 10;
-    }
+    /* Presence Elements */
+    .presence-container { display: flex; gap: 10px; align-items: center; }
+    .presence-pill { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 20px; border: 1px solid var(--gold); position: relative; cursor: help; animation: slideInRight 0.5s ease-out; }
+    .presence-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; box-shadow: 0 0 8px var(--success); animation: pulse 2s infinite; }
+    .presence-name { font-size: 0.75rem; font-weight: bold; color: var(--gold); text-transform: uppercase; }
+    .presence-pill:hover::after { content: attr(data-tooltip); position: absolute; top: 110%; left: 50%; transform: translateX(-50%); background: #222; color: #fff; padding: 5px 10px; border-radius: 4px; font-size: 0.65rem; white-space: nowrap; border: 1px solid var(--gold); z-index: 100; }
 
+    /* Navigation */
     .nav { display: flex; justify-content: center; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
-    .nav button { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 8px 20px; cursor: pointer; font-family: 'Cinzel'; transition: 0.3s; font-size: 0.85rem; border-radius: 4px; }
-    .nav button.active { background: var(--gold); color: var(--maroon); font-weight: bold; }
+    .nav button { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 10px 25px; cursor: pointer; font-family: 'Cinzel'; transition: 0.3s; border-radius: 4px; }
+    .nav button.active { background: var(--gold); color: var(--maroon); font-weight: bold; transform: scale(1.05); }
 
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 50px; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* Dashboard Stats - Restored to Boxes */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px; }
-    .stat-card { background: var(--card); padding: 30px; border-radius: 12px; border-left: 5px solid var(--gold); text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-    .stat-card h3 { margin: 0; font-size: 0.9rem; color: var(--gold); text-transform: uppercase; letter-spacing: 2px; }
-    .stat-card p { font-size: 2.5rem; font-weight: bold; margin: 15px 0 0; }
-
-    /* Event Occupancy - Restored to original layout */
-    .capacity-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-top: 20px; }
-    .progress-container { background: var(--card); padding: 20px; border-radius: 10px; border: 1px solid #333; cursor: pointer; transition: 0.3s; }
-    .progress-container:hover { border-color: var(--gold); transform: translateY(-3px); }
-    .progress-bar-bg { background: #000; height: 12px; border-radius: 6px; overflow: hidden; margin-top: 15px; }
-    .progress-bar-fill { background: var(--gold); height: 100%; width: 0%; transition: width 1s; }
-
-    /* Activity Sidebar */
-    #activity-sidebar {
-      position: fixed; right: -320px; top: 80px; width: 300px; height: calc(100vh - 100px);
-      background: var(--card); border-left: 2px solid var(--gold); z-index: 2000;
-      transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 20px; box-shadow: -10px 0 30px rgba(0,0,0,0.5);
-    }
-    #activity-sidebar.open { right: 0; }
-    .toggle-activity {
-      position: fixed; right: 25px; bottom: 25px; background: var(--gold); color: var(--maroon);
-      width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; z-index: 2100; box-shadow: 0 4px 20px rgba(0,0,0,0.5); font-size: 1.4rem;
-    }
+    /* Cards & Layout */
+    .container { max-width: 1250px; margin: 0 auto; padding: 0 15px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+    .stat-card { background: var(--card); padding: 20px; border-radius: 10px; border-top: 3px solid var(--gold); text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .progress-card { background: var(--card); padding: 20px; border-radius: 10px; border: 1px solid #333; cursor: pointer; transition: transform 0.3s, border-color 0.3s; }
+    .progress-card:hover { border-color: var(--gold); transform: translateY(-3px); }
 
     /* Tables */
-    .table-wrapper { background: var(--card); border-radius: 12px; overflow-x: auto; border: 1px solid #333; margin-top: 20px; }
+    .table-wrapper { background: var(--card); border-radius: 12px; overflow-x: auto; border: 1px solid #333; position: relative; }
     table { width: 100%; border-collapse: collapse; min-width: 900px; }
-    th, td { padding: 15px; text-align: left; border-bottom: 1px solid #222; }
-    th { background: #222; color: var(--gold); font-family: 'Cinzel'; font-size: 0.8rem; letter-spacing: 1px; }
-    .status-badge { padding: 5px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
-    .APPROVED { background: #1b5e20; } .PENDING { background: #f57f17; } .REJECTED { background: #b71c1c; }
+    th { background: #222; color: var(--gold); padding: 12px 15px; font-family: 'Cinzel'; font-size: 0.8rem; text-align: left; white-space: nowrap; position: sticky; top: 0; z-index: 10; cursor: pointer; user-select: none; }
+    th:hover { background: #333; }
+    td { padding: 12px 15px; border-bottom: 1px solid #222; font-size: 0.85rem; white-space: nowrap; }
+    tr { transition: background 0.3s; }
+    tr:hover { background: rgba(212, 175, 55, 0.05); }
 
-    /* Modals */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 5000; backdrop-filter: blur(8px); }
-    .modal-content { background: var(--card); border: 2px solid var(--gold); border-radius: 15px; padding: 30px; position: relative; width: 90%; max-width: 450px; text-align: center; }
-    .close-modal { position: absolute; top: 15px; right: 20px; font-size: 2rem; color: var(--gold); cursor: pointer; }
+    /* Badges & Micro UI */
+    .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+    .APPROVED { background: rgba(40, 167, 69, 0.2); color: #28a745; border: 1px solid #28a745; }
+    .PENDING { background: rgba(245, 127, 23, 0.2); color: #f57f17; border: 1px solid #f57f17; }
+    .REJECTED { background: rgba(220, 53, 69, 0.2); color: #dc3545; border: 1px solid #dc3545; }
+    
+    .team-badge { background: var(--gold); color: var(--maroon); border-radius: 10px; padding: 2px 6px; font-size: 0.65rem; font-weight: bold; margin-left: 8px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 3px; }
+    .team-badge:hover { transform: scale(1.1); box-shadow: 0 0 8px rgba(212,175,55,0.5); }
+    .filter-icon { color: #555; margin-left: 5px; transition: 0.3s; }
+    th:hover .filter-icon, .filter-icon.active { color: var(--gold); }
 
-    .vanish-animation { animation: vanishToDust 0.8s ease-in forwards; pointer-events: none; }
-    @keyframes vanishToDust { 100% { opacity: 0; transform: translateY(-40px) scale(1.1); filter: blur(10px); color: var(--gold); } }
+    /* Action Buttons */
+    .action-group { display: flex; gap: 5px; }
+    .btn-icon { width: 30px; height: 30px; border-radius: 4px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: 0.3s; color: white; }
+    .btn-icon.approve { background: var(--success); }
+    .btn-icon.reject { background: var(--danger); }
+    .btn-icon:hover:not(:disabled) { filter: brightness(1.2); transform: scale(1.05); }
+    .btn-icon:disabled { background: #555; cursor: not-allowed; transform: none; }
+
+    /* Modals & Overlays */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 5000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); padding: 15px; }
+    .modal { background: var(--card); border: 1px solid var(--gold); border-radius: 12px; padding: 25px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,0.8); animation: popIn 0.3s ease; }
+    .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: var(--gold); cursor: pointer; background: none; border: none; }
+    
+    /* Smart Filter UI */
+    .filter-dropdown { position: absolute; background: #222; border: 1px solid var(--gold); border-radius: 6px; padding: 10px; z-index: 2000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); min-width: 200px; display: none; }
+    .filter-dropdown input { width: 100%; padding: 8px; background: #000; border: 1px solid #444; color: #fff; margin-bottom: 10px; border-radius: 4px; font-family: 'Montserrat'; font-size: 0.8rem; }
+    .filter-options { max-height: 150px; overflow-y: auto; font-family: 'Montserrat'; font-size: 0.8rem; display: flex; flex-direction: column; gap: 5px; }
+    .filter-options label { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #ccc; }
+
+    /* Sidebar */
+    #activity-sidebar { position: fixed; right: -320px; top: 75px; width: 300px; height: calc(100vh - 75px); background: #111; border-left: 1px solid var(--gold); z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); padding: 20px; overflow-y: auto; }
+    #activity-sidebar.open { right: 0; box-shadow: -5px 0 20px rgba(0,0,0,0.7); }
+    .activity-item { padding: 12px 0; border-bottom: 1px solid #222; font-size: 0.8rem; line-height: 1.4; }
+    .activity-time { color: var(--gold); font-size: 0.65rem; font-weight: bold; margin-bottom: 3px; display: block; font-family: 'Cinzel'; letter-spacing: 1px; }
+
+    /* Detailed Modal Formatting */
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.8rem; margin-bottom: 15px; }
+    .detail-label { color: #888; font-size: 0.7rem; text-transform: uppercase; }
+    .participant-card { background: #000; border: 1px solid #333; padding: 12px; border-radius: 6px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .contact-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 5px; border-top: 1px solid #222; padding-top: 8px; }
+    .contact-link { color: var(--gold); text-decoration: none; font-size: 0.75rem; display: flex; align-items: center; gap: 5px; background: #222; padding: 4px 8px; border-radius: 4px; transition: 0.2s; }
+    .contact-link:hover { background: #333; color: #fff; }
+    .wa-link { color: #25D366; border-color: #25D366; }
+
+    /* Animations */
+    @keyframes slideInRight { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes popIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    @keyframes slideOut { to { opacity: 0; transform: translateX(50px); } }
+    .row-removing { animation: slideOut 0.4s forwards; pointer-events: none; }
+    .data-refresh { animation: highlightFlash 1s; }
+    @keyframes highlightFlash { 0% { background-color: rgba(212,175,55,0.3); } 100% { background-color: transparent; } }
+    @keyframes pulse { 0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(40, 167, 69, 0); } 100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); } }
+
+    /* Mobile Enhancements */
+    @media (max-width: 768px) {
+        .header-actions { flex-direction: column; width: 100%; }
+        .header-btn { width: 100%; justify-content: center; padding: 10px; }
+        .nav button { width: 100%; }
+        .login-box { padding: 25px; }
+        header { padding: 15px; }
+        #activity-sidebar { width: 100%; right: -100%; }
+    }
   </style>
 </head>
 <body>
 
   <div id="login-screen">
     <div class="login-box">
-      <h1 style="font-family:'Cinzel'; color:var(--gold); margin-bottom:10px;">ECHELON '26</h1>
-      <p style="letter-spacing: 2px; font-size: 0.8rem; margin-bottom:20px;">SECURE AUTHORIZATION</p>
-      <input type="password" id="adminPass" placeholder="Enter Unique Admin ID">
-      <button id="authBtn" onclick="checkLogin()">AUTHORIZE</button>
+      <h1 style="font-family:'Cinzel'; color:var(--gold); margin:0;">ECHELON '26</h1>
+      <p style="letter-spacing: 3px; font-size: 0.7rem; margin-bottom:30px; color: #aaa;">OPERATIONS DECK</p>
+      <input type="password" id="adminPass" placeholder="ADMIN ACCESS KEY">
+      <button id="authBtn" class="btn filled" style="width:100%; justify-content:center; padding:12px;" onclick="initiateLogin()">AUTHORIZE</button>
     </div>
   </div>
 
-  <div id="admin-content">
+  <div id="admin-content" style="display:none;">
     <header>
-      <div style="display:flex; align-items:center; gap:15px;">
-        <div class="admin-presence" id="adminCircle" data-tooltip="">??</div>
-        <h1 style="font-size:1.6rem;">COMMAND CENTER</h1>
+      <div>
+        <h2 style="font-family:'Cinzel'; color:var(--gold); margin:0; font-size:1.2rem;">COMMAND CENTER</h2>
+        <div class="presence-container" id="live-presence" style="margin-top:8px;"></div>
       </div>
-      <div style="display:flex; gap:10px;">
-        <button onclick="window.open('insights.html', '_blank')" style="background:transparent; border:1px solid var(--gold); color:var(--gold); padding:6px 15px; font-size:0.75rem; border-radius:4px; font-weight:bold; cursor:pointer;">INSIGHT CENTER</button>
-        <button onclick="window.location.reload()" style="background:var(--gold); border:none; padding:6px 15px; font-size:0.75rem; border-radius:4px; font-weight:bold; cursor:pointer; color:var(--maroon);">LOGOUT</button>
+      <div class="header-actions">
+        <button onclick="pollData(true)" id="refreshBtn" class="btn"><i class="fas fa-sync-alt"></i> REFRESH</button>
+        <button onclick="window.open('insights.html', '_blank')" class="btn"><i class="fas fa-chart-pie"></i> INSIGHTS</button>
+        <button onclick="logout()" class="btn danger"><i class="fas fa-sign-out-alt"></i> EXIT</button>
       </div>
     </header>
-    
+
     <div class="nav">
       <button onclick="showTab('dashboard')" class="tab-btn active" id="btn-dashboard">DASHBOARD</button>
-      <button onclick="showTab('pending')" class="tab-btn" id="btn-pending">QUEUE</button>
-      <button onclick="showTab('all')" class="tab-btn" id="btn-all">RECORDS</button>
+      <button onclick="showTab('pending')" class="tab-btn" id="btn-pending">LIVE QUEUE</button>
+      <button onclick="showTab('all')" class="tab-btn" id="btn-all">MASTER RECORDS</button>
       <button onclick="showTab('manage')" class="tab-btn" id="btn-manage">MANAGE</button>
     </div>
 
     <div class="container">
       <section id="dashboard" class="tab-content active">
         <div class="stats-grid">
-          <div class="stat-card"><h3>Total Entries</h3><p id="stat-total">0</p></div>
-          <div class="stat-card"><h3>Pending Apps</h3><p id="stat-pending">0</p></div>
-          <div class="stat-card"><h3>Approved Apps</h3><p id="stat-approved">0</p></div>
+          <div class="stat-card"><h3 style="font-size:0.7rem; color:var(--gold); margin:0;">TOTAL ENTRIES</h3><p id="stat-total" style="font-size:2rem; margin:10px 0 0;">0</p></div>
+          <div class="stat-card"><h3 style="font-size:0.7rem; color:var(--success); margin:0;">APPROVED</h3><p id="stat-approved" style="font-size:2rem; margin:10px 0 0;">0</p></div>
+          <div class="stat-card"><h3 style="font-size:0.7rem; color:#f57f17; margin:0;">PENDING</h3><p id="stat-pending" style="font-size:2rem; margin:10px 0 0;">0</p></div>
         </div>
-        <h2 style="font-family:'Cinzel'; color:var(--gold); font-size:1.2rem; border-bottom:1px solid #333; padding-bottom:10px;">Event Occupancy</h2>
-        <div id="capacity-trackers" class="capacity-section"></div>
+        <h3 style="font-family:'Cinzel'; border-bottom:1px solid #333; padding-bottom:10px; color:var(--gold);">Event Saturation <span style="font-size:0.6rem; color:#888; font-family:'Montserrat'; text-transform:none;">(Click to Drilldown)</span></h3>
+        <div id="capacity-trackers" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px; margin-top:20px;"></div>
       </section>
 
-      <section id="pending" class="tab-content">
+      <section id="pending" class="tab-content" style="display:none;">
         <div class="table-wrapper">
-          <table>
-            <thead><tr><th>Submitted On</th><th>Reg ID</th><th>Lead Name</th><th>Event</th><th>Institution</th><th>Action</th></tr></thead>
-            <tbody id="pending-body"></tbody>
-          </table>
-        </div>
-      </section>
-      
-      <section id="all" class="tab-content">
-        <div style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
-          <input type="text" id="searchInput" onkeyup="globalSearch()" placeholder="Quick Search ID or Name..." style="background:#000; border:1px solid var(--gold); color:#fff; padding:12px; width:300px; border-radius:5px;">
-          <div style="display:flex; gap:10px;">
-            <button onclick="clearAllFilters()" id="clearFilters" style="display:none; background:#dc3545; color:white; border:none; padding:10px 20px; border-radius:4px; cursor:pointer; font-weight:bold;">REMOVE FILTERS</button>
-            <button onclick="downloadCSV()" style="background:#28a745; color:white; border:none; padding:10px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">DOWNLOAD MASTER EXCEL</button>
-          </div>
-        </div>
-        <div class="table-wrapper"><table id="allTable"><thead id="allTableHeader"></thead><tbody id="all-body"></tbody></table></div>
-      </section>
-
-      <section id="manage" class="tab-content">
-        <div class="stat-card" style="text-align: left; border-left: 5px solid #dc3545; padding: 40px;">
-          <h2 style="font-family:'Cinzel'; color:#dc3545; margin-bottom:10px;">Danger Zone</h2>
-          <p style="font-size:0.9rem; color:#ccc; margin-bottom:25px;">Enter the Registration ID of the entry you wish to permanently remove.</p>
-          <div style="display:flex; gap:15px; flex-wrap:wrap;">
-            <input type="text" id="deleteId" placeholder="Reg ID (e.g., EC26-MOB-123)" style="background:#000; border:1px solid #dc3545; color:#fff; padding:12px; width:300px; border-radius:4px;">
-            <button onclick="confirmDelete()" style="background:#dc3545; color:white; border:none; padding:12px 30px; border-radius:4px; font-weight:bold; cursor:pointer;">DELETE RECORD</button>
-          </div>
+            <table>
+                <thead><tr><th>Submitted</th><th>Reg ID</th><th>Team / Lead</th><th>Event</th><th>Institution</th><th>Actions</th></tr></thead>
+                <tbody id="pending-body"></tbody>
+            </table>
         </div>
       </section>
 
-      <section id="event-drilldown" class="tab-content">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #333; padding-bottom:15px;">
-          <button onclick="showTab('dashboard')" style="background:transparent; border:1px solid var(--gold); color:var(--gold); padding:8px 15px; border-radius:4px; cursor:pointer;">← BACK</button>
-          <h2 id="drilldown-title" style="font-family:'Cinzel'; color:var(--gold); margin:0;"></h2>
-          <button id="drilldown-csv" style="background:#28a745; border:none; color:white; padding:8px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">CSV</button>
+      <section id="all" class="tab-content" style="display:none;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px; align-items:center; flex-wrap:wrap; gap:15px;">
+            <div style="font-size:0.8rem; color:#888;"><i class="fas fa-filter"></i> Click table headers to filter data</div>
+            <button onclick="downloadExcel()" class="btn filled"><i class="fas fa-file-excel"></i> EXPORT TO EXCEL</button>
         </div>
-        <div class="nav" style="justify-content: flex-start; margin-bottom:20px;">
-          <button onclick="filterDrillTab('PENDING')" id="drill-btn-pending" class="active">QUEUE</button>
-          <button onclick="filterDrillTab('ALL')" id="drill-btn-all">RECORDS</button>
+        <div class="table-wrapper">
+            <table id="masterTable">
+                <thead>
+                    <tr>
+                        <th onclick="toggleFilter(this, 0)">Submitted <i class="fas fa-filter filter-icon"></i></th>
+                        <th onclick="toggleFilter(this, 1)">Reg ID <i class="fas fa-filter filter-icon"></i></th>
+                        <th onclick="toggleFilter(this, 2)">Team Lead <i class="fas fa-filter filter-icon"></i></th>
+                        <th onclick="toggleFilter(this, 3)">Event <i class="fas fa-filter filter-icon"></i></th>
+                        <th onclick="toggleFilter(this, 4)">Status <i class="fas fa-filter filter-icon"></i></th>
+                    </tr>
+                </thead>
+                <tbody id="all-body"></tbody>
+            </table>
         </div>
-        <div class="table-wrapper"><table id="drillTable"><thead><tr><th>Submitted On</th><th>Reg ID</th><th>Lead Name</th><th>Institution</th><th>Status</th><th>Action</th></tr></thead><tbody id="drill-body"></tbody></table></div>
+      </section>
+
+      <section id="manage" class="tab-content" style="display:none;">
+        <div class="stat-card" style="text-align: left; border-left: 5px solid var(--danger);">
+            <h2 style="font-family:'Cinzel'; color:var(--danger); margin-top:0;">Danger Zone</h2>
+            <p style="color:#ccc; font-size:0.9rem;">Permanently remove a record from the database using its Registration ID.</p>
+            <div style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;">
+              <input type="text" id="deleteId" placeholder="e.g. EC26-M10-MOB-A01" style="background:#000; border:1px solid var(--danger); color:#fff; padding:10px; border-radius:4px; width:300px; font-family:'Montserrat';">
+              <button id="btnDel" onclick="executeDelete()" class="btn danger" style="padding:10px 25px;"><i class="fas fa-trash"></i> DELETE RECORD</button>
+            </div>
+        </div>
+      </section>
+
+      <section id="drilldown" class="tab-content" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333; padding-bottom:15px; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+            <button onclick="showTab('dashboard')" class="btn"><i class="fas fa-arrow-left"></i> BACK</button>
+            <h2 id="drill-title" style="font-family:'Cinzel'; color:var(--gold); margin:0;">EVENT</h2>
+            <button id="drill-export-btn" class="btn filled"><i class="fas fa-file-excel"></i> EXPORT EVENT DATA</button>
+        </div>
+        <div class="nav" style="justify-content:flex-start; margin-bottom:15px;">
+            <button onclick="switchDrillTab('PENDING')" id="drill-tab-pending" class="active">QUEUE</button>
+            <button onclick="switchDrillTab('ALL')" id="drill-tab-all">RECORDS</button>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead><tr><th>Submitted</th><th>Reg ID</th><th>Lead Name</th><th>Institution</th><th>Status</th><th id="drill-action-head">Actions</th></tr></thead>
+                <tbody id="drill-body"></tbody>
+            </table>
+        </div>
       </section>
     </div>
 
     <div id="activity-sidebar">
-      <h3 style="font-family:'Cinzel'; color:var(--gold); border-bottom:1px solid #333; padding-bottom:10px; font-size:1rem;">Activity Log</h3>
-      <ul id="feed-list" style="padding-top:10px;"></ul>
+      <h4 style="font-family:'Cinzel'; color:var(--gold); border-bottom:1px solid #333; margin-top:0; padding-bottom:10px;">Audit Trail</h4>
+      <div id="activity-list"></div>
     </div>
-    <div class="toggle-activity" onclick="document.getElementById('activity-sidebar').classList.toggle('open')">
-      <i class="fas fa-history"></i>
+    
+    <div onclick="document.getElementById('activity-sidebar').classList.toggle('open')" style="position:fixed; bottom:25px; right:25px; background:var(--gold); width:55px; height:55px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--maroon); cursor:pointer; box-shadow:0 4px 15px rgba(0,0,0,0.5); z-index:2100; font-size:1.4rem;">
+        <i class="fas fa-history"></i>
     </div>
   </div>
 
-  <div class="modal-overlay" id="echelonModal">
-    <div class="modal-content">
-      <span class="close-modal" onclick="closeModal()">×</span>
-      <h2 id="modalTitle" style="font-family:'Cinzel'; color:var(--gold); font-size:1.2rem;"></h2>
-      <div id="modalBody" style="margin:25px 0; font-size:0.95rem; line-height:1.6;"></div>
-      <div id="modalFooter" style="display:flex; gap:12px; justify-content:center;"></div>
+  <div id="filter-dropdown" class="filter-dropdown">
+    <input type="text" id="filter-search" placeholder="Search..." oninput="filterOptions()">
+    <div id="filter-options-container" class="filter-options"></div>
+    <div style="display:flex; justify-content:space-between; margin-top:10px;">
+        <button onclick="clearFilter()" style="background:none; border:none; color:#888; cursor:pointer; font-size:0.7rem;">Clear</button>
+        <button onclick="applyFilter()" class="btn filled" style="padding:4px 10px; font-size:0.7rem;">Apply</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="details-modal">
+    <div class="modal">
+        <button class="modal-close" onclick="document.getElementById('details-modal').style.display='none'">&times;</button>
+        <h2 style="font-family:'Cinzel'; color:var(--gold); margin-top:0; border-bottom:1px solid #333; padding-bottom:10px;">Application Details</h2>
+        <div id="modal-content-inject"></div>
     </div>
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3ArMAcA7iRpNs2YhW3ggNgfwoXpOBPXCon11BAxr0YRudOysAXQY5OSTIs5uow8c/exec"; 
-    let adminId = "", adminName = "", mode = "", fullData = [], eventConfig = {}, activeFilters = {};
-    let currentDrillEvent = "", currentDrillTab = "PENDING";
-
-   async function checkLogin() {
-  const btn = document.getElementById('authBtn');
-  const pass = document.getElementById('adminPass').value.trim();
-  if (!pass) return;
-
-  // Visual feedback and locking
-  btn.classList.add('btn-loading');
-  adminId = pass;
-  mode = window.innerWidth < 768 ? "Mobile" : "Laptop/PC";
-
-  // SAVE THE SESSION for insights.html to access
-  sessionStorage.setItem('echelonAdminId', adminId);
-
-  try {
-    const response = await fetch(`${SCRIPT_URL}?action=getAdminData&key=${adminId}`);
-    const data = await response.json();
+    // --- APP SCRIPT URL ---
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz5H8BIL_jxlhWYu8o6EG1rJpPn6BgiLlLntm--8cGLI9JtSP7w0dr8WvswvjLD1oPN/exec"; 
     
-    if (data === "UNAUTHORIZED") {
-      btn.classList.remove('btn-loading');
-      sessionStorage.removeItem('echelonAdminId'); // Clear failed attempt
-      openModal("Access Denied", "Invalid Admin ID entered. Please try again.");
-      return;
-    }
-
-    adminName = data.adminName;
-    setupPresence();
+    let adminName = "", adminId = "", mode = "", fullData = [], logs = [];
+    let pollingInterval;
+    let activeDrillEvent = "", drillMode = "PENDING";
     
-    // UI Transitions
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('admin-content').style.display = 'block';
+    // Filter State
+    let activeFilters = { 0: [], 1: [], 2: [], 3: [], 4: [] }; 
+    let currentFilterCol = -1;
+
+    // LOGIN LOGIC
+    window.onload = () => {
+        const savedSession = sessionStorage.getItem('echelonAdminId');
+        if(savedSession) { document.getElementById('adminPass').value = savedSession; initiateLogin(); }
+    };
+
+    function initiateLogin() {
+        const pass = document.getElementById('adminPass').value.trim();
+        if (!pass) return;
+        mode = window.innerWidth < 768 ? "Mobile" : "Laptop/PC";
+        
+        const btn = document.getElementById('authBtn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AUTHORIZING'; btn.disabled = true;
+
+        fetch(`${SCRIPT_URL}?action=getAdminData&key=${pass}&mode=${mode}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data === "UNAUTHORIZED") {
+                    alert("Access Denied"); sessionStorage.removeItem('echelonAdminId');
+                    btn.innerText = "AUTHORIZE"; btn.disabled = false; return;
+                }
+                adminName = data.adminName; adminId = pass;
+                sessionStorage.setItem('echelonAdminId', adminId);
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('admin-content').style.display = 'block';
+                
+                refreshUI(data);
+                if(pollingInterval) clearInterval(pollingInterval);
+                pollingInterval = setInterval(() => pollData(false), 20000);
+            })
+            .catch(e => {
+                alert("Connection Error. Retrying...");
+                btn.innerText = "AUTHORIZE"; btn.disabled = false;
+            });
+    }
+
+    async function pollData(isManual = false) {
+        const btn = document.getElementById('refreshBtn');
+        if(isManual) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SYNCING'; btn.disabled = true; }
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=getAdminData&key=${adminId}&mode=${mode}`);
+            const data = await res.json();
+            if(data !== "UNAUTHORIZED") refreshUI(data, isManual);
+        } catch(e) {} 
+        finally {
+            if(isManual) { btn.innerHTML = '<i class="fas fa-sync-alt"></i> REFRESH'; btn.disabled = false; }
+        }
+    }
+
+    function refreshUI(data, flash = false) {
+        fullData = data.rows; logs = data.logs || []; 
+        updatePresence(data.activeAdmins || [{name: adminName, device: mode}]);
+        renderLogs();
+        const eventCounts = renderTables(flash);
+        renderStats(data.config, eventCounts);
+        if(activeDrillEvent) renderDrilldownTables();
+    }
+
+    // BULLETPROOF DATE PARSER
+    function formatDateTime(gmtString, includeSeconds = false) {
+        if (!gmtString) return "---";
+        try {
+            const d = new Date(gmtString);
+            if(isNaN(d.getTime())) return String(gmtString); // Return raw if parsing fails
+            const opts = { month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true };
+            if(includeSeconds) opts.second = '2-digit';
+            return d.toLocaleString('en-IN', opts);
+        } catch(e) { return String(gmtString); }
+    }
+
+    function updatePresence(admins) {
+        const container = document.getElementById('live-presence');
+        container.innerHTML = admins.map(a => {
+            let name = typeof a === 'string' ? a : a.name;
+            let dev = typeof a === 'string' ? 'Active' : (a.device || 'Active');
+            let shortName = name.split(' ')[0];
+            return `
+            <div class="presence-pill" data-tooltip="${name} • ${dev}">
+                <div class="presence-dot"></div>
+                <span class="presence-name">${shortName}</span>
+            </div>`;
+        }).join('');
+    }
+
+    // BULLETPROOF AUDIT LOG RENDERER
+    function renderLogs() {
+        const container = document.getElementById('activity-list');
+        if (!logs || logs.length === 0) { container.innerHTML = "<p style='color:#666;'>No recent activity.</p>"; return; }
+        
+        let html = '';
+        const reversedLogs = [...logs].reverse(); // Show newest first
+
+        reversedLogs.forEach(l => {
+            // Robust extraction handling both Google Apps Script Arrays and Objects
+            let time = l.time || l[0];
+            let user = l.user || l[1];
+            let action = l.action || l[2];
+            let target = l.target || l[3];
+            let dev = l.device || l[4] || "PC";
+
+            if (!time || time === "Timestamp") return; // Skip headers or empty rows
+
+            const isImportant = String(action).toUpperCase().includes('DELETE') || String(action).toUpperCase().includes('REJECT');
+            
+            html += `
+            <div class="activity-item ${isImportant ? 'important' : ''}">
+                <span class="activity-time">${formatDateTime(time)} • ${dev}</span>
+                <strong>${user}</strong> ${action} <span style="color:var(--gold)">${target || ''}</span>
+            </div>`;
+        });
+        
+        container.innerHTML = html || "<p style='color:#666;'>No recent activity.</p>";
+    }
+
+    // TABLES & CORE RENDERING
+    function renderTables(flash = false) {
+        const pBody = document.getElementById('pending-body');
+        const aBody = document.getElementById('all-body');
+        pBody.innerHTML = ""; aBody.innerHTML = "";
+
+        let t = 0, a = 0, p = 0; let counts = {};
+        window.masterTableData = [];
+
+        if (fullData.length > 1) {
+            fullData.slice(1).forEach((row, index) => {
+                const absIndex = index + 1; // Real index in fullData
+                const status = String(row[13] || "PENDING").toUpperCase();
+                const ev = row[3];
+                
+                t++; if(status === "APPROVED") { a++; counts[ev] = (counts[ev] || 0) + 1; } else if(status === "PENDING") { p++; }
+
+                // Parse JSON for Badges
+                let leadName = "Unknown", teamCount = 0;
+                try {
+                    const parsed = JSON.parse(row[8]);
+                    leadName = parsed[0].name;
+                    teamCount = parsed.length;
+                } catch(e) { leadName = row[8]; }
+
+                const badge = teamCount > 1 
+                    ? `<span class="team-badge" onclick="showDetails(${absIndex})"><i class="fas fa-users"></i> +${teamCount - 1}</span>` 
+                    : `<span class="team-badge" onclick="showDetails(${absIndex})" style="background:#333; color:#aaa;"><i class="fas fa-user"></i></span>`;
+                
+                const dateShort = formatDateTime(row[0]);
+
+                if(status === "PENDING") {
+                    pBody.innerHTML += `<tr id="row-${absIndex}" class="${flash ? 'data-refresh' : ''}">
+                        <td>${dateShort}</td><td>${row[4]}</td><td>${leadName} ${badge}</td>
+                        <td>${ev}</td><td>${row[5]}</td>
+                        <td>
+                            <div class="action-group">
+                                <button onclick="processRow(${absIndex}, 'APPROVED', this)" class="btn-icon approve"><i class="fas fa-check"></i></button>
+                                <button onclick="processRow(${absIndex}, 'REJECTED', this)" class="btn-icon reject"><i class="fas fa-times"></i></button>
+                            </div>
+                        </td>
+                    </tr>`;
+                }
+
+                // Store for Master Table (to allow DOM filtering without re-rendering)
+                const tr = document.createElement('tr');
+                tr.className = flash ? 'data-refresh' : '';
+                tr.innerHTML = `<td>${dateShort}</td><td>${row[4]}</td><td>${leadName} ${badge}</td><td>${ev}</td><td><span class="status-badge ${status}">${status}</span></td>`;
+                tr.dataset.c0 = dateShort.toLowerCase(); tr.dataset.c1 = String(row[4]).toLowerCase(); 
+                tr.dataset.c2 = leadName.toLowerCase(); tr.dataset.c3 = ev.toLowerCase(); tr.dataset.c4 = status.toLowerCase();
+                
+                aBody.appendChild(tr);
+                window.masterTableData.push(tr);
+            });
+        }
+        document.getElementById('stat-total').innerText = t; document.getElementById('stat-approved').innerText = a; document.getElementById('stat-pending').innerText = p;
+        applyFilterLogic(); 
+        return counts; 
+    }
+
+    function renderStats(config, counts) {
+        const trackers = document.getElementById('capacity-trackers');
+        trackers.innerHTML = "";
+        for (let date in config) {
+            for (let ev in config[date]) {
+                const done = counts[ev] || 0, cap = config[date][ev].capacity, pct = Math.min((done / cap) * 100, 100);
+                trackers.innerHTML += `
+                <div class="progress-card" onclick="openDrilldown('${ev}')">
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:10px;">
+                        <strong>${ev}</strong><span style="color:var(--gold); font-weight:bold;">${done}/${cap}</span>
+                    </div>
+                    <div style="background:#000; height:6px; border-radius:3px; overflow:hidden;">
+                        <div style="background:var(--gold); height:100%; width:${pct}%;"></div>
+                    </div>
+                </div>`;
+            }
+        }
+    }
+
+    // ACTIONS (Protected against double clicks)
+    async function processRow(idx, status, btnEl) {
+        const rowGroup = btnEl.closest('.action-group');
+        const buttons = rowGroup.querySelectorAll('button');
+        buttons.forEach(b => b.disabled = true);
+        btnEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=updateStatus&rowId=${idx+1}&newStatus=${status}&key=${adminId}&mode=${mode}`, {method: 'POST'});
+            if(res.ok) {
+                btnEl.closest('tr').classList.add('row-removing');
+                setTimeout(() => pollData(true), 400); 
+            }
+        } catch(e) { alert("Action failed."); buttons.forEach(b => b.disabled = false); btnEl.innerHTML = status === 'APPROVED' ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>'; }
+    }
+
+    async function executeDelete() {
+        const id = document.getElementById('deleteId').value.trim();
+        if(!id) return;
+        if(!confirm(`WARNING: Permanently delete ${id}? This cannot be undone.`)) return;
+
+        const btn = document.getElementById('btnDel');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> DELETING'; btn.disabled = true;
+
+        try {
+            await fetch(`${SCRIPT_URL}?action=deleteRecord&regId=${id}&key=${adminId}&mode=${mode}`, {method: 'POST'});
+            document.getElementById('deleteId').value = "";
+            alert("Record deleted.");
+            pollData(true);
+        } catch(e) { alert("Failed."); } finally { btn.innerHTML = '<i class="fas fa-trash"></i> DELETE RECORD'; btn.disabled = false; }
+    }
+
+    // ACTIONABLE MODAL DETAILS
+    function showDetails(idx) {
+        const r = fullData[idx];
+        let pList = [];
+        try { pList = JSON.parse(r[8]); } catch(e) { pList = [{name: r[8], phone: r[9]}]; }
+        
+        let html = `
+            <div class="detail-grid">
+                <div><span class="detail-label">Reg ID</span><br><b>${r[4]}</b></div>
+                <div><span class="detail-label">Status</span><br><span class="status-badge ${r[13]||'PENDING'}">${r[13]||'PENDING'}</span></div>
+                <div><span class="detail-label">Event</span><br><b>${r[3]}</b></div>
+                <div><span class="detail-label">Institution</span><br><b>${r[5]}</b></div>
+            </div>
+            <div style="background:#000; padding:10px; border-radius:6px; margin-bottom:15px; font-size:0.8rem; border:1px dashed #333;">
+                <span class="detail-label">Submitted:</span> ${formatDateTime(r[0], true)}<br>
+                <span class="detail-label">Processed:</span> ${r[14] ? formatDateTime(r[14], true) : 'Pending'}
+            </div>
+            <h4 style="color:var(--gold); margin:10px 0 5px; font-family:'Cinzel';">Team Roster</h4>
+            <div style="max-height:250px; overflow-y:auto; padding-right:5px;">
+        `;
+        
+        pList.forEach((p, i) => {
+            // Strip any formatting from phone to make clean links
+            let cleanPhone = String(p.phone).replace(/\D/g, '');
+            
+            html += `<div class="participant-card">
+                <span style="font-weight:bold; font-size:0.9rem;">${i === 0 ? '👑' : '<i class="fas fa-user" style="color:#555"></i>'} ${p.name}</span>
+                <div class="contact-actions">
+                    <a href="tel:${cleanPhone}" class="contact-link"><i class="fas fa-phone-alt"></i> ${p.phone}</a>
+                    <a href="https://wa.me/91${cleanPhone}" target="_blank" class="contact-link wa-link"><i class="fab fa-whatsapp"></i> Chat</a>
+                </div>
+            </div>`;
+        });
+        
+        html += `</div>`;
+        document.getElementById('modal-content-inject').innerHTML = html;
+        document.getElementById('details-modal').style.display = 'flex';
+    }
+
+    // EVENT DRILLDOWN
+    function openDrilldown(ev) {
+        activeDrillEvent = ev;
+        document.getElementById('drill-title').innerText = ev;
+        document.getElementById('drill-export-btn').onclick = () => downloadExcel(ev);
+        showTab('drilldown');
+        renderDrilldownTables();
+    }
+
+    function switchDrillTab(tab) {
+        drillMode = tab;
+        document.getElementById('drill-tab-pending').classList.toggle('active', tab === 'PENDING');
+        document.getElementById('drill-tab-all').classList.toggle('active', tab === 'ALL');
+        document.getElementById('drill-action-head').style.display = tab === 'PENDING' ? '' : 'none';
+        renderDrilldownTables();
+    }
+
+    function renderDrilldownTables() {
+        const body = document.getElementById('drill-body'); body.innerHTML = "";
+        fullData.slice(1).forEach((r, i) => {
+            if(r[3] !== activeDrillEvent) return;
+            const status = String(r[13] || "PENDING").toUpperCase();
+            if(drillMode === 'PENDING' && status !== 'PENDING') return;
+
+            let leadName = "Unknown"; try { leadName = JSON.parse(r[8])[0].name; } catch(e) { leadName = r[8]; }
+            
+            let actionHtml = '';
+            if(drillMode === 'PENDING') {
+                actionHtml = `<td><div class="action-group"><button onclick="processRow(${i+1}, 'APPROVED', this)" class="btn-icon approve"><i class="fas fa-check"></i></button><button onclick="processRow(${i+1}, 'REJECTED', this)" class="btn-icon reject"><i class="fas fa-times"></i></button></div></td>`;
+            }
+
+            body.innerHTML += `<tr><td>${formatDateTime(r[0])}</td><td>${r[4]}</td><td>${leadName}</td><td>${r[5]}</td><td><span class="status-badge ${status}">${status}</span></td>${actionHtml}</tr>`;
+        });
+    }
+
+    // SMART EXCEL EXPORT (Parsed Arrays)
+    function downloadExcel(eventName = null) {
+        let maxP = 1;
+        let exportRows = [];
+
+        fullData.slice(1).forEach(r => {
+            if(eventName && r[3] !== eventName) return;
+            let pList = [];
+            try { pList = JSON.parse(r[8]); } catch(e) { pList = [{name: r[8]||'', phone: r[9]||''}]; }
+            if(pList.length > maxP) maxP = pList.length;
+            exportRows.push({ raw: r, members: pList });
+        });
+
+        if(exportRows.length === 0) { alert("No data to export."); return; }
+
+        let headers = ["Timestamp", "Processed Time", "Reg ID", "Event", "Institution", "Department", "Email", "Status"];
+        for(let i=1; i<=maxP; i++) { headers.push(`P${i} Name`, `P${i} Phone`); }
+
+        let csv = headers.join(",") + "\n";
+        exportRows.forEach(obj => {
+            let row = [
+                `"${obj.raw[0]}"`, `"${obj.raw[14]||''}"`, `"${obj.raw[4]}"`, `"${obj.raw[3]}"`, 
+                `"${obj.raw[5]}"`, `"${obj.raw[6]}"`, `"${obj.raw[7]}"`, `"${obj.raw[13]||'PENDING'}"`
+            ];
+            for(let i=0; i<maxP; i++) {
+                if(obj.members[i]) { row.push(`"${obj.members[i].name}"`, `"${obj.members[i].phone}"`); } 
+                else { row.push('""', '""'); }
+            }
+            csv += row.join(",") + "\n";
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `ECHELON26_${eventName ? eventName.replace(/\s+/g,'_') : 'MASTER'}.csv`;
+        link.click();
+    }
+
+    // TABLE FILTERING LOGIC
+    function toggleFilter(th, colIdx) {
+        const box = document.getElementById('filter-dropdown');
+        if (currentFilterCol === colIdx && box.style.display === 'block') { box.style.display = 'none'; return; }
+        
+        currentFilterCol = colIdx;
+        document.getElementById('filter-search').value = '';
+        
+        const uniqueVals = new Set();
+        window.masterTableData.forEach(tr => {
+            const txt = tr.cells[colIdx].innerText.trim();
+            if(txt && !txt.includes('+')) uniqueVals.add(txt); 
+        });
+
+        const optsContainer = document.getElementById('filter-options-container');
+        optsContainer.innerHTML = Array.from(uniqueVals).sort().map(val => `
+            <label><input type="checkbox" value="${val.toLowerCase()}" ${activeFilters[colIdx].includes(val.toLowerCase()) ? 'checked' : ''}> ${val}</label>
+        `).join('');
+
+        const rect = th.getBoundingClientRect();
+        box.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+        box.style.left = rect.left + 'px';
+        box.style.display = 'block';
+    }
+
+    function filterOptions() {
+        const q = document.getElementById('filter-search').value.toLowerCase();
+        document.querySelectorAll('#filter-options-container label').forEach(lbl => {
+            lbl.style.display = lbl.innerText.toLowerCase().includes(q) ? 'flex' : 'none';
+        });
+    }
+
+    function applyFilter() {
+        const checked = Array.from(document.querySelectorAll('#filter-options-container input:checked')).map(cb => cb.value);
+        activeFilters[currentFilterCol] = checked;
+        document.getElementById('filter-dropdown').style.display = 'none';
+        
+        const headers = document.querySelectorAll('#masterTable th .filter-icon');
+        headers[currentFilterCol].classList.toggle('active', checked.length > 0);
+        applyFilterLogic();
+    }
+
+    function clearFilter() {
+        activeFilters[currentFilterCol] = [];
+        document.getElementById('filter-dropdown').style.display = 'none';
+        document.querySelectorAll('#masterTable th .filter-icon')[currentFilterCol].classList.remove('active');
+        applyFilterLogic();
+    }
+
+    function applyFilterLogic() {
+        if(!window.masterTableData) return;
+        window.masterTableData.forEach(tr => {
+            let show = true;
+            for(let col in activeFilters) {
+                if(activeFilters[col].length > 0) {
+                    const rowVal = tr.getAttribute(`data-c${col}`);
+                    if(!activeFilters[col].some(filterVal => rowVal.includes(filterVal))) { show = false; break; }
+                }
+            }
+            tr.style.display = show ? '' : 'none';
+        });
+    }
+
+    // UTILS
+    function showTab(id) {
+        if(id !== 'drilldown') activeDrillEvent = ""; 
+        document.querySelectorAll('.tab-content').forEach(s => s.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        if(document.getElementById('btn-'+id)) document.getElementById('btn-'+id).classList.add('active');
+    }
+
+    function logout() { sessionStorage.removeItem('echelonAdminId'); window.location.reload(); }
     
-    // Data Loading
-    fullData = data.rows; 
-    eventConfig = data.config; 
-    renderAll();
-    
-    updateActivityLog("authorized session");
-  } catch (e) { 
-    btn.classList.remove('btn-loading');
-    console.error("Login Error:", e);
-    openModal("Connection Error", "Failed to reach the Command Center. Check your internet.");
-  }
-}
-
-    function setupPresence() {
-      const circle = document.getElementById('adminCircle');
-      circle.innerText = adminName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0,2);
-      circle.setAttribute('data-tooltip', `${adminName} (${mode})`);
-    }
-
-    function updateActivityLog(action, target = "") {
-      const list = document.getElementById('feed-list');
-      const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-      list.innerHTML = `<li class="feed-item">[${time}] <span>${adminName}</span> ${action} ${target ? '<b>'+target+'</b>' : ''}</li>` + list.innerHTML;
-    }
-
-    function showTab(id) { 
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active')); 
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); 
-      document.getElementById(id).classList.add('active'); 
-      if(document.getElementById('btn-'+id)) document.getElementById('btn-'+id).classList.add('active'); 
-      if(id !== 'event-drilldown') currentDrillEvent = "";
-    }
-
-    function renderAll() {
-      const pBody = document.getElementById('pending-body'), aBody = document.getElementById('all-body'), trackers = document.getElementById('capacity-trackers');
-      pBody.innerHTML = ""; aBody.innerHTML = ""; trackers.innerHTML = "";
-      let stats = { total: 0, pending: 0, approved: 0, counts: {} };
-      setupFilteredHeaders();
-
-      for (let i = 1; i < fullData.length; i++) {
-        const row = fullData[i], status = String(row[13] || "PENDING").toUpperCase(), ev = row[3];
-        stats.total++;
-        if(status === "APPROVED") { stats.approved++; stats.counts[ev] = (stats.counts[ev] || 0) + 1; }
-        else if(status === "PENDING") stats.pending++;
-
-        const lead = formatLeadName(row[8], i), sub = parseSheetDate(row[0]), proc = parseSheetDate(row[14]);
-        if (status === "PENDING") { 
-          pBody.innerHTML += `<tr><td class="timestamp">${sub}</td><td>${row[4]}</td><td>${lead}</td><td>${ev}</td><td>${row[5]}</td><td><button onclick="confirmStatus(${i+1}, 'APPROVED', this)" class="btn-approve">✓</button> <button onclick="confirmStatus(${i+1}, 'REJECTED', this)" class="btn-reject">✕</button></td></tr>`; 
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('th') && !e.target.closest('#filter-dropdown')) {
+            document.getElementById('filter-dropdown').style.display = 'none';
         }
-        aBody.innerHTML += `<tr><td class="timestamp">${sub}</td><td class="timestamp">${proc}</td><td>${row[4]}</td><td>${lead}</td><td>${ev}</td><td>${row[5]}</td><td><span class="status-badge ${status}">${status}</span></td></tr>`;
-      }
-
-      document.getElementById('stat-total').innerText = stats.total;
-      document.getElementById('stat-pending').innerText = stats.pending;
-      document.getElementById('stat-approved').innerText = stats.approved;
-
-      for (let date in eventConfig) {
-        for (let ev in eventConfig[date]) {
-          const done = stats.counts[ev] || 0, cap = eventConfig[date][ev].capacity, pct = Math.min((done / cap) * 100, 100);
-          trackers.innerHTML += `<div class="progress-container" onclick="openDrill('${ev}')"><div style="display:flex; justify-content:space-between; font-size:0.85rem;"><strong>${ev}</strong><span>${done}/${cap}</span></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div></div>`;
-        }
-      }
-    }
-
-    // Modal Helpers
-    function openModal(title, body, footer = "") { 
-      document.getElementById('modalTitle').innerText = title; 
-      document.getElementById('modalBody').innerHTML = body; 
-      document.getElementById('modalFooter').innerHTML = footer; 
-      document.getElementById('echelonModal').style.display = 'flex'; 
-    }
-    function closeModal() { document.getElementById('echelonModal').style.display = 'none'; }
-
-    // Table Logic Restored
-    function setupFilteredHeaders() {
-      const labels = ["Submitted On", "Processed On", "Reg ID", "Lead Name", "Event", "Institution", "Status"];
-      document.getElementById('allTableHeader').innerHTML = "<tr>" + labels.map((text, idx) => `<th><div style="display:flex; align-items:center; justify-content:space-between; cursor:pointer;" onclick="openFilterModal(${idx}, '${text}')">${text} <span style="color:var(--gold); font-size:0.6rem;">▼</span></div></th>`).join("") + "</tr>";
-    }
-
-    function parseSheetDate(d) { 
-      if(!d || d === "---") return "---"; 
-      const p = d.match(/(\d{2})\/(\d{2})\/(\d{4})\s(\d{2}):(\d{2}):(\d{2})/); 
-      if(p) return new Date(p[3], p[2]-1, p[1], p[4], p[5], p[6]).toLocaleString('en-IN', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', hour12:true}); 
-      return d; 
-    }
-
-    function formatLeadName(j, i) { 
-      try { 
-        const p = JSON.parse(j); 
-        return p[0].name + (p.length > 1 ? ` <span style="color:var(--gold); font-size:0.7rem; cursor:pointer;" onclick='openMemberModal(${j})'>+${p.length-1} MORE</span>` : ""); 
-      } catch(e) { return j || "N/A"; } 
-    }
-
-    function openMemberModal(data) { 
-      let h = data.map((m, idx) => `<div style="text-align:left; margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;"><strong>${idx+1}. ${m.name}</strong><br><small style="color:#aaa">${m.phone}</small></div>`).join(""); 
-      openModal("Team Members", h, `<button onclick="closeModal()" style="background:var(--gold); border:none; padding:8px 20px; border-radius:4px; cursor:pointer; color:var(--maroon); font-weight:bold;">CLOSE</button>`); 
-    }
-
-    async function confirmStatus(rowId, status, btn) {
-      const tr = btn.closest('tr');
-      openModal("Confirm Action", `Mark application <b>${tr.cells[1].innerText}</b> as <b>${status}</b>?`, `
-        <button onclick="closeModal()" style="background:transparent; border:1px solid #777; color:#fff; padding:8px 20px; border-radius:4px; cursor:pointer;">CANCEL</button>
-        <button onclick="executeStatus(${rowId}, '${status}', '${tr.cells[1].innerText}')" style="background:#28a745; border:none; color:white; padding:8px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">PROCEED</button>
-      `);
-      window.activeTr = tr;
-    }
-
-async function loadData() {
-    // Re-fetch data using the stored adminId
-    const response = await fetch(`${SCRIPT_URL}?action=getAdminData&key=${adminId}`);
-    const data = await response.json();
-    if (data !== "UNAUTHORIZED") {
-        fullData = data.rows;
-        eventConfig = data.config;
-        renderAll();
-        if (currentDrillEvent) renderDrill(); // Update drill-down if open
-    }
-}
-
-    async function executeStatus(rowId, status, regId) {
-      closeModal();
-      const tr = window.activeTr;
-      try {
-        const res = await fetch(`${SCRIPT_URL}?action=updateStatus&rowId=${rowId}&newStatus=${status}&key=${adminId}&mode=${mode}`, { method: 'POST' });
-        if (res.ok) { 
-          tr.classList.add('vanish-animation'); 
-          updateActivityLog(`marked as ${status}`, regId); 
-          setTimeout(() => loadData(), 800); 
-        }
-      } catch(e) { console.error(e); }
-    }
-
-    function openDrill(ev) { 
-      currentDrillEvent = ev; 
-      showTab('event-drilldown'); 
-      document.getElementById('drilldown-title').innerText = ev; 
-      renderDrill(); 
-      document.getElementById('drilldown-csv').onclick = () => downloadCSV(ev); 
-    }
-
-    function renderDrill() {
-      const tbody = document.getElementById('drill-body'); tbody.innerHTML = "";
-      fullData.forEach((r, i) => {
-        if(i === 0 || r[3] !== currentDrillEvent) return;
-        const status = r[13] || "PENDING"; if(currentDrillTab === 'PENDING' && status !== 'PENDING') return;
-        tbody.innerHTML += `<tr><td class="timestamp">${parseSheetDate(r[0])}</td><td>${r[4]}</td><td>${formatLeadName(r[8], i)}</td><td>${r[5]}</td><td><span class="status-badge ${status}">${status}</span></td><td>${status === 'PENDING' ? `<button onclick="confirmStatus(${i+1}, 'APPROVED', this)" class="btn-approve">✓</button> <button onclick="confirmStatus(${i+1}, 'REJECTED', this)" class="btn-reject">✕</button>` : '---'}</td></tr>`;
-      });
-    }
-
-    function filterDrillTab(t) { 
-      currentDrillTab = t; 
-      document.getElementById('drill-btn-pending').classList.toggle('active', t === 'PENDING'); 
-      document.getElementById('drill-btn-all').classList.toggle('active', t === 'ALL'); 
-      renderDrill(); 
-    }
-
-    function openFilterModal(idx, name) {
-      openModal(`Filter ${name}`, `<input type="text" id="filterInput" placeholder="Keyword..." style="background:#000; border:1px solid var(--gold); color:#fff; padding:12px; width:100%; border-radius:5px; box-sizing:border-box;" value="${activeFilters[idx] || ''}">`, `
-        <button onclick="closeModal()" style="background:transparent; border:1px solid #777; color:#fff; padding:8px 20px; border-radius:4px; cursor:pointer;">CANCEL</button>
-        <button onclick="applyFilter(${idx})" style="background:var(--gold); border:none; color:var(--maroon); padding:8px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">APPLY</button>
-      `);
-    }
-
-    function applyFilter(idx) {
-      const val = document.getElementById('filterInput').value.trim().toLowerCase();
-      if(!val) delete activeFilters[idx]; else activeFilters[idx] = val;
-      closeModal(); 
-      const rows = document.getElementById('all-body').getElementsByTagName('tr'); 
-      for (let r of rows) { 
-        let m = true; 
-        for (let i in activeFilters) { if(!r.cells[i].innerText.toLowerCase().includes(activeFilters[i])) m = false; } 
-        r.style.display = m ? "" : "none"; 
-      }
-      document.getElementById('clearFilters').style.display = Object.keys(activeFilters).length ? 'inline-block' : 'none';
-    }
-
-    function globalSearch() { 
-      const q = document.getElementById('searchInput').value.toLowerCase(); 
-      const rows = document.getElementById('all-body').getElementsByTagName('tr'); 
-      for (let r of rows) r.style.display = r.innerText.toLowerCase().includes(q) ? "" : "none"; 
-    }
-
-    function clearAllFilters() { 
-      activeFilters = {}; 
-      const rows = document.getElementById('all-body').getElementsByTagName('tr'); 
-      for (let r of rows) r.style.display = ""; 
-      document.getElementById('clearFilters').style.display = 'none'; 
-      document.getElementById('searchInput').value = "";
-    }
-
-    function confirmDelete() {
-      const id = document.getElementById('deleteId').value.trim();
-      if(!id) return;
-      openModal("Delete Record", `Are you sure you want to PERMANENTLY remove <b>${id}</b>? This action cannot be undone.`, `
-        <button onclick="closeModal()" style="background:transparent; border:1px solid #777; color:#fff; padding:8px 20px; border-radius:4px; cursor:pointer;">CANCEL</button>
-        <button onclick="executeDelete('${id}')" style="background:#dc3545; border:none; color:white; padding:8px 20px; border-radius:4px; font-weight:bold; cursor:pointer;">DELETE</button>
-      `);
-    }
-
-    async function executeDelete(id) {
-      closeModal();
-      try {
-        const res = await fetch(`${SCRIPT_URL}?action=deleteRecord&regId=${id}&key=${adminId}&mode=${mode}`, { method: 'POST' });
-        const json = await res.json();
-        if(json.success) {
-          document.querySelectorAll('tr').forEach(r => { if(r.innerText.includes(id)) r.classList.add('vanish-animation'); });
-          updateActivityLog("deleted record", id); 
-          setTimeout(() => loadData(), 850);
-        }
-      } catch(e) { console.error(e); }
-    }
-
-    function downloadCSV(ev = null) { 
-      if(fullData.length <= 1) return; 
-      let maxP = 0; const prc = []; 
-      for (let i=1; i<fullData.length; i++) { 
-        if(ev && fullData[i][3] !== ev) continue; 
-        let p = []; 
-        try { p = JSON.parse(fullData[i][8]); } catch(e) { p = [{name: fullData[i][8], phone: fullData[i][9]}]; } 
-        if(p.length > maxP) maxP = p.length; 
-        prc.push({r: fullData[i], p}); 
-      } 
-      let h = ["Submitted","Processed","Date","Event","Reg ID","Institution","Status"]; 
-      for(let i=1; i<=maxP; i++) h.push(`P${i} Name`,`P${i} Phone`); 
-      let csv = h.join(",") + "\n"; 
-      prc.forEach(({r, p}) => { 
-        let row = [`"${r[0]}"`,`"${r[14] || '---'}"`,`"${r[2]}"`,`"${r[3]}"`,`"${r[4]}"`,`"${r[5]}"`,`"${r[13]}"`]; 
-        for(let i=0; i<maxP; i++) { if(p[i]) row.push(`"${p[i].name}"`,`"${p[i].phone}"`); else row.push("",""); } 
-        csv += row.join(",") + "\n"; 
-      }); 
-      const b = new Blob([csv], {type:'text/csv'}); 
-      const a = document.createElement('a'); 
-      a.href = URL.createObjectURL(b); 
-      a.download = ev ? `${ev}_RECORDS.csv` : `ECHELON_MASTER.csv`; 
-      a.click(); 
-    }
+    });
   </script>
 </body>
 </html>
-
-
-
-
-
