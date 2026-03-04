@@ -60,41 +60,178 @@ h2 { font-family: 'Cinzel', serif; color: var(--gold); font-size: clamp(1rem, 4v
 .step.active { display: block; animation: fade .5s ease forwards; }
 @keyframes fade { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-.option { padding: 15px; border: 1px solid rgba(212, 175, 55, 0.3); background: rgba(255,255,255,0.03); border-radius: 10px; cursor: pointer; transition: var(--transition); margin-bottom: 12px; }
-.option.selected { background: var(--gold-grad) !important; color: var(--maroon) !important; font-weight: 700 !important; }
-.option.disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+/* Base Option Card */
+.option { 
+    padding: 18px; 
+    border: 1px solid rgba(212, 175, 55, 0.2); 
+    background: rgba(255, 255, 255, 0.05); 
+    border-radius: 12px; 
+    cursor: pointer; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+}
 
-.input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-top: 10px; }
-.input-wrapper { position: relative; }
-.input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); }
-input { width: 100%; padding: 12px 12px 12px 45px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.3); background: var(--input-bg); color: var(--cream); }
-
-/* --- BANNER	 --- */
-
-.selection-rule-box {
+/* Hover State (Only for non-disabled, non-selected cards) */
+.option:hover:not(.disabled):not(.selected) {
     background: rgba(212, 175, 55, 0.1);
-    border-left: 4px solid var(--gold);
-    padding: 12px;
-    margin-bottom: 20px;
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Selected State - Premium Gold Look */
+.option.selected { 
+    background: var(--gold-grad) !important; 
+    color: var(--maroon) !important; 
+    font-weight: 700 !important; 
+    border: 1px solid #ffffff;
+    transform: scale(1.01);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+/* Disabled/Full State */
+.option.disabled { 
+    opacity: 0.4; 
+    cursor: not-allowed; 
+    filter: grayscale(1); 
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive Grid for Participants */
+.input-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
+    gap: 15px; 
+    margin-top: 10px; 
+}
+
+/* Wrapper for Icon Positioning */
+.input-wrapper { 
+    position: relative; 
+    width: 100%;
+}
+
+/* Icon Styling inside Input */
+.input-wrapper i { 
+    position: absolute; 
+    left: 16px; 
+    top: 50%; 
+    transform: translateY(-50%); 
+    color: var(--gold); 
+    font-size: 0.9rem;
+    pointer-events: none; /* Ensures clicking the icon focuses the input */
+    transition: color 0.3s ease;
+}
+
+/* Modern Dark Input */
+input { 
+    width: 100%; 
+    padding: 14px 14px 14px 45px; 
+    border-radius: 10px; 
+    border: 1px solid rgba(212, 175, 55, 0.3); 
+    background: var(--input-bg); 
+    color: var(--cream); 
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+/* Input Focus State */
+input:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: rgba(45, 0, 33, 1); /* Solidify background on type */
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+/* Change icon color when input is focused */
+.input-wrapper:focus-within i {
+    color: #ffffff;
+}
+
+/* Placeholder Styling */
+input::placeholder {
+    color: rgba(245, 241, 230, 0.4);
     font-size: 0.8rem;
+}
+
+/* --- SELECTION RULE BANNER --- */
+.selection-rule-box {
+    background: rgba(212, 175, 55, 0.07);
+    border-left: 4px solid var(--gold);
+    border-radius: 4px 10px 10px 4px;
+    padding: 14px;
+    margin: 20px 0;
+    font-size: 0.85rem;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    line-height: 1.4;
+    color: var(--cream);
+    /* Subtle glow to make it look like an official notice */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* If any event is selected in a group, dim the others slightly */
-
-#march10Events:has(.selected) .option:not(.selected),
-#march11Events:has(.selected) .option:not(.selected) {
-    opacity: 0.6;
-    filter: saturate(0.5);
+.selection-rule-box i {
+    color: var(--gold);
+    font-size: 1.1rem;
 }
 
+/* --- SELECTED STATE TRANSFORMATIONS --- */
 .option.selected {
     opacity: 1 !important;
-    filter: saturate(1) !important;
-    transform: scale(1.02); /* Slight pop effect */
-    border: 2px solid var(--gold);
+    filter: saturate(1.2) !important;
+    transform: translateY(-3px) scale(1.02); /* Lift + Grow */
+    border: 2px solid #ffffff !important; /* White border looks sharper on gold-grad */
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+    z-index: 2; /* Ensures the shadow stays above other cards */
+}
+
+/* Ensure meta-text (like slot count) stays readable on the gold background */
+.option.selected .event-meta {
+    color: var(--maroon) !important;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+/* Smooth transition for the scaling/moving */
+.option {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* --- STICKY EVENT HEADERS --- */
+/* This ensures users don't forget which event they are currently filling details for */
+.participant-section h3 {
+    position: sticky;
+    top: 65px; /* Adjust based on your navbar height */
+    background: #5d0043; /* Slightly lighter than maroon to stand out */
+    padding: 12px 15px;
+    z-index: 10;
+    margin: -15px -15px 15px -15px; /* Offset section padding */
+    border-bottom: 2px solid var(--gold);
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* --- SELECTION INDICATOR ANIMATION --- */
+/* Adds a high-end "pop" when a user taps a card */
+.option.selected .selection-indicator i {
+    color: var(--maroon) !important;
+    font-size: 1.3rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    animation: checkBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes checkBounce {
+    0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* --- FEEDBACK FOR CLICKING --- */
+.option:active {
+    transform: scale(0.98);
 }
 
 /* --- SEARCHABLE DROPDOWN CSS --- */
@@ -102,7 +239,7 @@ input { width: 100%; padding: 12px 12px 12px 45px; border-radius: 8px; border: 1
 .dropdown-list {
   position: absolute; top: calc(100% + 5px); left: 0; width: 100%;
   background: #2d0021; border: 1px solid var(--gold);
-  border-radius: 8px; z-index: 2000;
+  border-radius: 8px; z-index: 9999;
   max-height: 250px; overflow-y: auto; display: none;
   box-shadow: 0 15px 35px rgba(0,0,0,0.8);
 }
@@ -233,15 +370,15 @@ button:disabled { opacity: 0.5; cursor: wait; }
     
     <div class="modal-section-title"><i class="fas fa-scroll"></i> MANDATORY RULES</div>
     <ul class="modal-list rule-highlight">
-      <li><strong>One Event Per Day:</strong> You can participate in both March 10 & 11, but only <strong>ONE</strong> event per day is allowed.</li>
+      <li><strong>Multiple Events:</strong> You can participate in multiple events per day, provided timings do not overlap.</li>
       <li><strong>Unique Identity:</strong> Each participant must use their own unique mobile number. Duplicate numbers across teams will be auto-rejected.</li>
     </ul>
 
     <div class="modal-section-title"><i class="fas fa-users"></i> TEAM COMPOSITION</div>
     <ul class="modal-list">
-      <li><strong>Biz Auction:</strong> Mandatory 4 Members (Full Team).</li>
+      <li><strong>Biz Auction:</strong> Minimum 2 - Maximum 4 (Full Team).</li>
       <li><strong>Identity Unleashed:</strong> Solo Participation (Individual).</li>
-      <li><strong>Other Events:</strong> Minimum 2 Participants required.</li>
+      <li><strong>Other Events:</strong> Minimum 1 Participant required.</li>
     </ul>
 
     <div class="modal-section-title"><i class="fas fa-tasks"></i> PROCESS</div>
@@ -257,7 +394,7 @@ button:disabled { opacity: 0.5; cursor: wait; }
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9QWpnJogCfKgFSDvyoSFe1lc102qaZRN08DGFCgBnIM2BD0UxeWyDFXNeiytsCzB4/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzujnNOf1B5TEUNMrlZvxwlhDnnsjiysMHFpsEhz8FHH3GheAFa683wjEyzxouB9hES/exec";
 
 const EVENT_CONFIG = {
   "March 10": { "Make or Break": { capacity: 35 }, "Quizpreneur": { capacity: 50 }, "Behind the Brand": { capacity: 20 } },
@@ -271,11 +408,13 @@ const eventData = {
     {name:"Behind the Brand", type:"team", sizeRule: "1–4 Members"}
   ],
   "March 11": [
-    {name:"Biz Auction", type:"biz", sizeRule: "2–4 Members (Min. 2 Required)"}, // Updated this
+    // Ensure type is "biz" here to trigger the logic in participantFields
+    {name:"Biz Auction", type:"biz", sizeRule: "2–4 Members (Min. 2 Required)"}, 
     {name:"Decision Table", type:"team", sizeRule: "1–4 Members"},
     {name:"Identity Unleashed", type:"individual", sizeRule: "Individual (1 Participant)"}
   ]
 };
+
 
 // --- COLLEGE LIST DATA ---
 let collegeMasterList = [
@@ -288,7 +427,8 @@ let selectedEvents = {};
 function toggleDate(date, el) {
   if (selectedDates.includes(date)) {
     selectedDates = selectedDates.filter(d => d !== date);
-    delete selectedEvents[date];
+    // CRITICAL: Also remove any events selected for this date
+    delete selectedEvents[date]; 
     el.classList.remove("selected");
   } else {
     selectedDates.push(date);
@@ -313,20 +453,24 @@ async function goToEvents(){
   finally { btn.innerText = "Next Step"; btn.disabled = false; }
 }
 
-
-function buildEventOptions(liveData){
+// Add this helper function at the top of your script
+function generateEventId(date, name) {
+    return `${date}-${name}`.replace(/\s+/g, '-');
+}
+	
+function buildEventOptions(liveData) {
   // Clear the event containers first
   document.getElementById("march10Events").innerHTML = "";
   document.getElementById("march11Events").innerHTML = "";
-  
+
   selectedDates.forEach(date => {
     let container = document.getElementById(date === "March 10" ? "march10Events" : "march11Events");
-    
-    // 1. Set the Initial Header and Rule Box ONCE for the date
+
+    // 1. UPDATED: Header and Rule Box to reflect multi-selection
     container.innerHTML = `
       <div class="selection-rule-box">
         <i class="fas fa-info-circle"></i>
-        <span>Pick 1 Event Only for ${date}. Selecting a new one replaces the old one.</span>
+        <span>Multiple selections allowed! Tap an event to select/deselect it for ${date}.</span>
       </div>
       <h3 style="color:var(--gold); font-family:'Cinzel'; margin: 15px 0 10px; font-size: 0.9rem;">${date}</h3>
     `;
@@ -335,47 +479,55 @@ function buildEventOptions(liveData){
       const stats = liveData?.[date]?.[ev.name];
       const left = EVENT_CONFIG[date][ev.name].capacity - (stats ? stats.approved : 0);
       const isFull = left <= 0;
-      const isSelected = selectedEvents[date]?.name === ev.name;
-      
+
+      // 2. RECTIFIED: Correctly check if event exists in the new ARRAY structure
+      const isSelected = Array.isArray(selectedEvents[date]) && 
+                         selectedEvents[date].some(item => item.name === ev.name);
+
       const card = document.createElement('div');
-      card.className = `option ${isFull ? 'disabled' : ''}`;
-      if(isSelected) card.classList.add('selected');
-      
-      // 2. Card Content with the Selection Indicator area
+      // Add 'selected' class immediately if it was already picked (for step navigation)
+      card.className = `option ${isFull ? 'disabled' : ''} ${isSelected ? 'selected' : ''}`;
+
       card.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
           <div style="flex:1; font-size:0.85rem;">
             <strong>${ev.name}</strong><br>
-            <span class="event-meta">${ev.sizeRule}</span>
+            <span class="event-meta" style="font-size: 0.75rem; opacity: 0.8;">${ev.sizeRule}</span>
             <div style="margin-top:5px;">
-              ${isFull ? '<span style="color:red; font-weight:bold;">FULL</span>' : `<span class="event-meta" style="color:var(--gold)">Slots: ${left}</span>`}
+              ${isFull ? 
+                '<span style="color:var(--error); font-weight:bold;">FULL</span>' : 
+                `<span class="event-meta" style="color:var(--gold)">Slots Available: ${left}</span>`
+              }
             </div>
           </div>
           <div class="selection-indicator" style="margin-left:10px;">
             ${isSelected ? '<i class="fas fa-check-circle" style="color:var(--maroon); font-size:1.2rem;"></i>' : ''}
           </div>
         </div>`;
-      
-      if(!isFull) card.onclick = () => selectEvent(date, ev, card);
-      
-      // 3. Append the card so it doesn't overwrite the header
+
+      if (!isFull) {
+        card.onclick = () => selectEvent(date, ev, card);
+      }
+
       container.appendChild(card);
     });
   });
 }
 
 function goToDetails() {
-  const dates = Object.keys(selectedEvents || {});
+  const datesWithEvents = Object.keys(selectedEvents || {});
 
-  if (dates.length === 0) {
+  // 1. Check if they picked ANYTHING at all
+  if (datesWithEvents.length === 0) {
     alert("Please select at least one event to continue.");
     return;
   }
 
-  // Ensure each selected day has one selected event.
-  for (const date of selectedDates || []) {
-    if (!selectedEvents[date]) {
-      alert(`Please select one event for ${date}.`);
+  // 2. Logic fix: If they selected a DATE in Step 1, they MUST pick an event for it.
+  // If they changed their mind, they should go back and unselect the date.
+  for (const date of selectedDates) {
+    if (!selectedEvents[date] || selectedEvents[date].length === 0) {
+      alert(`You selected ${date} as a participation day. Please pick at least one event for this day or go back to deselect the date.`);
       return;
     }
   }
@@ -383,30 +535,54 @@ function goToDetails() {
   buildParticipantForms();
   nextStep(3);
 }
+	
+function selectEvent(date, ev, el) {
+    // 1. Initialize the array for this date if it doesn't exist
+    if (!Array.isArray(selectedEvents[date])) {
+        selectedEvents[date] = [];
+    }
 
-function selectEvent(date, ev, el){
-  selectedEvents[date] = ev;
-  
-  // 1. Clear 'selected' class and checkmarks from all other options in this day's container
-  const parent = el.parentNode;
-  Array.from(parent.querySelectorAll('.option')).forEach(child => {
-    child.classList.remove('selected');
-    const indicator = child.querySelector('.selection-indicator');
-    if(indicator) indicator.innerHTML = ''; // Remove checkmark
-  });
-  
-  // 2. Add 'selected' class and checkmark to the clicked card
-  el.classList.add('selected');
-  const activeIndicator = el.querySelector('.selection-indicator');
-  if(activeIndicator) {
-    activeIndicator.innerHTML = '<i class="fas fa-check-circle" style="color:var(--maroon); font-size:1.2rem;"></i>';
-  }
+    // 2. Check if the event is already selected
+    const eventIndex = selectedEvents[date].findIndex(item => item.name === ev.name);
+
+    if (eventIndex > -1) {
+        // --- DESELECT LOGIC ---
+        // Remove the event from the array
+        selectedEvents[date].splice(eventIndex, 1);
+        
+        // Remove visual highlights
+        el.classList.remove('selected');
+        const indicator = el.querySelector('.selection-indicator');
+        if (indicator) indicator.innerHTML = '';
+        
+        // Clean up the object if no events are left for this date
+        if (selectedEvents[date].length === 0) delete selectedEvents[date];
+        
+    } else {
+        // --- SELECT LOGIC ---
+        // Add the event object to the array
+        selectedEvents[date].push(ev);
+        
+        // Add visual highlights
+        el.classList.add('selected');
+        const activeIndicator = el.querySelector('.selection-indicator');
+        if (activeIndicator) {
+            activeIndicator.innerHTML = '<i class="fas fa-check-circle" style="color:var(--maroon); font-size:1.2rem;"></i>';
+        }
+    }
 }
 
+function updateContinueButton() {
+    const btn = document.querySelector("button[onclick='goToDetails()']");
+    const count = Object.values(selectedEvents).flat().length;
+    btn.innerHTML = count > 0 ? `Continue (${count} Events Selected)` : `Continue`;
+}
 
-function buildParticipantForms(){
-  let html = `
-    <div class="participant-section" style="border: 2px solid var(--gold); overflow: visible !important;">
+// Call updateContinueButton() at the end of your selectEvent() function.	
+
+function buildParticipantForms() {
+    let html = `
+    <div class="participant-section" style="border: 2px solid var(--gold); .participant-section">
       <span class="participant-title">Institution & Department</span>
       <div class="input-grid">
         <div class="input-wrapper dropdown-container">
@@ -423,38 +599,81 @@ function buildParticipantForms(){
         </div>
       </div>
     </div>`;
-  
-  const dates = Object.keys(selectedEvents);
-  dates.forEach((date, index)=>{
-    let ev=selectedEvents[date];
-    // Add "Same as" checkbox for the second date selected
-    let copyCheckbox = (index > 0) ? `<label style="display:block; margin-bottom:10px; font-size:0.7rem; color:var(--gold); cursor:pointer;"><input type="checkbox" onchange="copyData('${dates[0]}', '${date}', this)" style="width:auto; margin-right:5px;"> Same as ${dates[0]}</label>` : '';
+
+    const dates = Object.keys(selectedEvents);
     
-    html+=`<div class="participant-section">
-      <h3 style="font-family:'Cinzel'; color:var(--gold); font-size:0.85rem; margin-bottom:10px; border-bottom:1px solid rgba(212,55,55,0.1); padding-bottom:5px;">${date} – ${ev.name}</h3>
-      ${copyCheckbox}
-      <div class="input-wrapper" style="margin-bottom:10px;"><i class="fas fa-envelope"></i><input type="email" id="${date}-email" placeholder="Email Address" required></div>
-      ${participantFields(ev, date)}
-    </div>`;
-  });
-  document.getElementById("dynamicForm").innerHTML=html;
+    dates.forEach((date) => {
+        // Since selectedEvents[date] is now an array of objects:
+        selectedEvents[date].forEach((ev) => {
+            // Create a unique ID string for this specific event instance
+            const eventId = `${date}-${ev.name}`.replace(/\s+/g, '-');
+            
+            html += `
+            <div class="participant-section" id="section-${eventId}">
+                <h3 style="font-family:'Cinzel'; color:var(--gold); font-size:0.85rem; margin-bottom:10px; border-bottom:1px solid rgba(212,175,55,0.2); padding-bottom:5px;">
+                    ${date} – ${ev.name}
+                </h3>
+                <div class="input-wrapper" style="margin-bottom:15px;">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="${eventId}-email" placeholder="Contact Email for ${ev.name}" required>
+                </div>
+                ${participantFields(ev, date, eventId)}
+            </div>`;
+        });
+    });
+
+    document.getElementById("dynamicForm").innerHTML = html;
 }
 
-function participantFields(ev, date){
-  let html = ""; 
-  // 1. Both Quiz and Biz now show 4 rows. Others show 4 (team) or 1 (individual).
-  let count = (ev.name === "Quizpreneur" || ev.type === "biz") ? 4 : (ev.type === "individual" ? 1 : 4);
-  
-  for(let i=1; i<=count; i++){
-    // 2. Participant 1 & 2 are REQUIRED for Quizpreneur and Biz Auction.
-    // Participant 1 is REQUIRED for everything else.
-    let isReq = (i === 1 || ((ev.type === "biz" || ev.name === "Quizpreneur") && i === 2)) ? "required" : "";
+// Rectified helper function to use the unique eventId for participant inputs
+	function participantFields(ev, date, eventId) {
+    let html = "";
     
-    let leadTag = (i === 1) ? '<span style="background:var(--gold); color:var(--maroon); font-size:0.6rem; padding:2px 6px; border-radius:3px; margin-left:10px; font-weight:bold;">TEAM LEAD</span>' : '';
+    // Simplification: If it's individual, show 1. Everything else shows 4.
+    const maxCount = (ev.type === "individual") ? 1 : 4;
     
-    html += `<div style="margin-bottom:12px;"><span class="participant-title" style="border:none; margin:0; font-size:0.7rem;">Participant ${i} ${leadTag}</span><div class="input-grid"><div class="input-wrapper"><i class="fas fa-user"></i><input id="${date}-p${i}-name" placeholder="Name" ${isReq}></div><div class="input-wrapper"><i class="fas fa-phone"></i><input type="tel" id="${date}-p${i}-phone" placeholder="Phone" maxlength="10" ${isReq} oninput="this.value = this.value.replace(/[^0-9]/g, '');"></div></div></div>`;
-  }
-  return html;
+    for (let i = 1; i <= maxCount; i++) {
+        // Logic remains sound: 
+        // P1 is always required. 
+        // P2 is required ONLY if it's a 'biz' type or 'Quizpreneur'.
+        const isMandatory = (i === 1 || ((ev.type === "biz" || ev.name === "Quizpreneur") && i === 2));
+        const isReq = isMandatory ? "required" : "";
+        
+        // Dynamic Labeling
+        let tag = "";
+        if (ev.type === "individual") {
+            tag = '<span style="background:var(--gold); color:var(--maroon); font-size:0.6rem; padding:2px 6px; border-radius:3px; margin-left:10px; font-weight:bold;">SOLO</span>';
+        } else if (i === 1) {
+            tag = '<span style="background:var(--gold); color:var(--maroon); font-size:0.6rem; padding:2px 6px; border-radius:3px; margin-left:10px; font-weight:bold;">TEAM LEAD</span>';
+        } else if (isMandatory) {
+            tag = '<span style="border: 1px solid var(--gold); color:var(--gold); font-size:0.5rem; padding:1px 4px; border-radius:3px; margin-left:10px;">REQUIRED</span>';
+        }
+
+        html += `
+        <div style="margin-bottom:15px;">
+            <span class="participant-title" style="border:none; margin:0; font-size:0.7rem;">
+                Participant ${i} ${tag}
+            </span>
+            <div class="input-grid">
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+                    <input id="${eventId}-p${i}-name" 
+                           placeholder="Participant ${i} Full Name" 
+                           ${isReq} 
+                           autocomplete="name">
+                </div>
+                <div class="input-wrapper">
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="${eventId}-p${i}-phone" 
+                           placeholder="10-Digit Phone" 
+                           maxlength="10" 
+                           ${isReq} 
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                </div>
+            </div>
+        </div>`;
+    }
+    return html;
 }
 
 // --- SEARCH DROPDOWN LOGIC ---
@@ -620,22 +839,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-function copyData(sourceDate, targetDate, checkbox) {
-    if(checkbox.checked) {
-        // Copy Email
-        document.getElementById(`${targetDate}-email`).value = document.getElementById(`${sourceDate}-email`).value;
-        // Copy up to 4 participants
-        for(let i=1; i<=4; i++) {
-            let sName = document.getElementById(`${sourceDate}-p${i}-name`);
-            let sPhone = document.getElementById(`${sourceDate}-p${i}-phone`);
-            let tName = document.getElementById(`${targetDate}-p${i}-name`);
-            let tPhone = document.getElementById(`${targetDate}-p${i}-phone`);
-            
-            if(sName && tName) tName.value = sName.value;
-            if(sPhone && tPhone) tPhone.value = sPhone.value;
-        }
-    }
-}
 
   // Helper to read cookies
 function getCookie(name) {
@@ -649,7 +852,7 @@ function getCookie(name) {
   
 // Update your submit button to call this instead of submitFinalRegistration directly
 async function validateAndSubmit() {
-    // 1. Check College & Department First
+    // 1. INSTITUTION VALIDATION
     const college = document.getElementById('common-college');
     const dept = document.getElementById('common-dept');
     
@@ -664,149 +867,176 @@ async function validateAndSubmit() {
         return;
     }
 
-    // 2. Check for Cookies (Browser-level block)
-    const dates = Object.keys(selectedEvents);
-    for (let date of dates) {
-        const cookieName = `echelon_reg_${date.replace(/\s/g, '')}`;
-        if (getCookie(cookieName)) {
-            alert(`DUPLICATE ENTRY:\nYou have already registered for ${date} from this device!`);
-            return;
-        }
-    }
-
-    // 3. Check ALL required fields with Exact Messaging
+    // 2. DYNAMIC FORM VALIDATION (Checks 'required' attributes)
     const requiredInputs = document.querySelectorAll('#dynamicForm input[required]');
     for (let input of requiredInputs) {
         if (!input.value.trim()) {
             const section = input.closest('.participant-section');
             const sectionName = section ? section.querySelector('h3').innerText : "this event";
-            
-            // This pulls the specific placeholder (e.g., "Participant 2 Name")
             const fieldIdentity = input.placeholder || "This field";
             
-            alert(`ACTION REQUIRED:\n\n${fieldIdentity} is necessary for ${sectionName}. Kindly fill it to proceed.`);
+            alert(`ACTION REQUIRED:\n\n${fieldIdentity} is necessary for ${sectionName}.`);
             input.focus();
             return;
         }
     }
 
-    // 4. Phone Format & Duplicate Checks
-    const teamSections = document.querySelectorAll('.participant-section');
-    for (let section of teamSections) {
-        const phoneInputs = section.querySelectorAll('input[type="tel"]');
-        const phoneValues = [];
-        for (let p of phoneInputs) {
-            const val = p.value.trim();
-            if (val) {
-                if (!/^[6-9]\d{9}$/.test(val)) {
-                    alert(`INVALID PHONE:\n\nThe phone number for ${p.placeholder} must be a 10-digit number starting with 6-9.`);
-                    p.focus();
+    // 3. LOGICAL VALIDATION (Per Event Rules)
+    for (const date in selectedEvents) {
+        for (const ev of selectedEvents[date]) {
+            const eventId = `${date}-${ev.name}`.replace(/\s+/g, '-');
+            
+            // A. Check Participant 1 (Compulsory for ALL)
+            const p1Name = document.getElementById(`${eventId}-p1-name`).value.trim();
+            const p1Phone = document.getElementById(`${eventId}-p1-phone`).value.trim();
+            if (!p1Name || !p1Phone) {
+                alert(`Participant 1 (Team Lead) is required for ${ev.name} (${date}).`);
+                return;
+            }
+
+            // B. Check Participant 2 (Compulsory ONLY for Quiz/Biz)
+            if (ev.type === "biz" || ev.name === "Quizpreneur") {
+                const p2Name = document.getElementById(`${eventId}-p2-name`).value.trim();
+                const p2Phone = document.getElementById(`${eventId}-p2-phone`).value.trim();
+                if (!p2Name || !p2Phone) {
+                    alert(`${ev.name} requires at least 2 participants. Please fill Participant 2 details.`);
                     return;
                 }
-                if (phoneValues.includes(val)) {
-                    alert("DUPLICATE PHONE:\n\nEach participant in a team must have a unique phone number!");
-                    p.focus();
-                    return;
+            }
+
+            // C. Phone Format & Team-Level Duplicate Check
+            const phoneInputs = document.querySelectorAll(`[id^="${eventId}-p"][id$="-phone"]`);
+            const phoneValues = [];
+            for (let p of phoneInputs) {
+                const val = p.value.trim();
+                if (val) {
+                    if (!/^[6-9]\d{9}$/.test(val)) {
+                        alert(`INVALID PHONE:\n\n${val} is not a valid 10-digit number.`);
+                        p.focus();
+                        return;
+                    }
+                    if (phoneValues.includes(val)) {
+                        alert(`DUPLICATE PHONE:\n\nPhone number ${val} is repeated in the team for ${ev.name}.`);
+                        p.focus();
+                        return;
+                    }
+                    phoneValues.push(val);
                 }
-                phoneValues.push(val);
             }
         }
     }
-    
-    // 5. Declaration Check
-    if(!document.getElementById("declaration").checked){ 
-        alert("Please check the confirmation box at the bottom."); 
-        return; 
+
+    // 4. DECLARATION CHECK
+    const declaration = document.getElementById("declaration");
+    if (!declaration || !declaration.checked) {
+        alert("Please check the confirmation box at the bottom.");
+        return;
     }
 
+    // Proceed to final submission
     submitFinalRegistration();
 }
 	
-async function submitFinalRegistration(){
-  if(!document.getElementById("declaration").checked){ alert("Please confirm details."); return; }
-  
-  const college = document.getElementById('common-college').value.trim();
-  const dept = document.getElementById('common-dept').value.trim();
-  if(!college || !dept){ alert("College and Department names are required."); return; }
-
-  const btn = document.getElementById("submitBtn");
-  const originalText = btn.innerText;
-  btn.disabled = true; 
-  btn.innerText = "Processing Registration...";
-
-  // BUILD THE COMPLETE DATA PAYLOAD
-  const payload = {
-    selectedEvents: Object.keys(selectedEvents).map(date => {
-      const ev = selectedEvents[date];
-      const parts = [];
-      // Determine max participants based on event type
-      const maxParticipants = (ev.name === "Quizpreneur" || ev.type === "biz") ? 4 : (ev.type === "individual" ? 1 : 4);
-      
-      for(let i=1; i <= maxParticipants; i++){
-        let nameEl = document.getElementById(`${date}-p${i}-name`);
-        let phoneEl = document.getElementById(`${date}-p${i}-phone`);
-        // Only push if the name field actually has content
-        if(nameEl && nameEl.value.trim()) {
-          parts.push({
-            name: nameEl.value.trim(), 
-            phone: phoneEl.value.trim()
-          });
-        }
-      }
-      
-      return { 
-        date: date, 
-        eventName: ev.name, 
-        email: document.getElementById(`${date}-email`).value.trim(), 
-        college: college, 
-        department: dept, 
-        participants: parts 
-      };
-    }),
-    // If you have a transaction ID field in your HTML, capture it here:
-    transactionId: document.getElementById('transaction-id') ? document.getElementById('transaction-id').value.trim() : "DIRECT_ENTRY"
-  };
-
-  try {
-    const response = await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
+	
+async function submitFinalRegistration() {
+    const btn = document.getElementById("submitBtn");
+    const originalText = btn.innerText;
     
-    const result = await response.text();
+    // UI Loading State
+    btn.disabled = true;
+    btn.innerText = "Processing Registration...";
 
-    if (result.trim() === "Success") {
-      showSuccess();
-    } else {
-      // If result includes "Error", show the Iron-Clad message from Backend
-      alert("⚠️ REGISTRATION FAILED:\n\n" + result.replace("Error: ", ""));
-      btn.disabled = false;
-      btn.innerText = originalText;
+    const college = document.getElementById('common-college').value.trim();
+    const dept = document.getElementById('common-dept').value.trim();
+    const allRegistrations = [];
+
+    // BUILD PAYLOAD
+    Object.keys(selectedEvents).forEach(date => {
+        selectedEvents[date].forEach(ev => {
+            const parts = [];
+            const eventId = `${date}-${ev.name}`.replace(/\s+/g, '-');
+            
+            // Set limit: Individual = 1, Team/Biz/Quiz = 4
+            const maxLimit = (ev.type === "individual") ? 1 : 4;
+
+            for (let i = 1; i <= maxLimit; i++) {
+                const nameEl = document.getElementById(`${eventId}-p${i}-name`);
+                const phoneEl = document.getElementById(`${eventId}-p${i}-phone`);
+                
+                // Only collect if name is provided (cleans empty rows)
+                if (nameEl && nameEl.value.trim()) {
+                    parts.push({
+                        name: nameEl.value.trim(),
+                        phone: phoneEl.value.trim()
+                    });
+                }
+            }
+
+            allRegistrations.push({
+                date: date,
+                eventName: ev.name,
+                email: document.getElementById(`${eventId}-email`).value.trim(),
+                college: college,
+                department: dept,
+                participants: parts
+            });
+        });
+    });
+
+    const payload = {
+        selectedEvents: allRegistrations,
+        transactionId: "DIRECT_ENTRY" 
+    };
+
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.text();
+
+        if (result.trim() === "Success") {
+            showSuccess();
+        } else {
+            alert("⚠️ REGISTRATION FAILED:\n\n" + result.replace("Error: ", ""));
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    } catch (e) {
+        console.error("Submission Error:", e);
+        alert("Connection Error: The server is busy or your internet is unstable. Please try again.");
+        btn.disabled = false;
+        btn.innerText = originalText;
     }
-  } catch(e) {
-    console.error(e);
-    alert("Connection Error: The server is busy or your internet is unstable. Please try again.");
-    btn.disabled = false;
-    btn.innerText = originalText;
-  }
 }
-
+	
 function showSuccess(){
-  // SET COOKIES FOR THE SELECTED DATES
-  const dates = Object.keys(selectedEvents);
-  dates.forEach(date => {
-      const cookieName = `echelon_reg_${date.replace(/\s/g, '')}`;
-      // Cookie expires in 30 days
-      document.cookie = `${cookieName}=true; max-age=${30*24*60*60}; path=/`;
-  });
+  /** * COOKIE BLOCK REMOVED: 
+   * No longer setting 'echelon_reg' cookies, 
+   * allowing the user to register again immediately.
+   */
 
   document.querySelector(".container").innerHTML = `
-    <div style="text-align:center; padding:30px;">
+    <div style="text-align:center; padding:30px; animation: fade 0.8s ease forwards;">
       <i class="fas fa-check-circle" style="font-size:3rem; color:var(--gold); margin-bottom:15px;"></i>
-      <h2 style="color:var(--gold); font-family:'Cinzel'; font-size:1.2rem;">Registration Sent!</h2>
-      <p style="font-size:0.85rem; margin-bottom:20px;">YOUR SEATS WILL BE CONFIRMED IN 24-48 HOURS</p>
-      <p style="font-size:0.8rem; color:#aaa;">Please check your email for the official <b>Applied ID (A-Series)</b>.</p>
-      <button onclick="window.location.href='index.html'" style="width:auto; padding:10px 30px; margin-top:20px;">Return Home</button>
+      
+      <h2 style="color:var(--gold); font-family:'Cinzel'; font-size:1.5rem; margin-bottom:10px;">Registration Received!</h2>
+      
+      <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <p style="font-size:0.9rem; color:var(--gold); font-weight: bold; margin-bottom:5px;">NEXT STEPS:</p>
+        <p style="font-size:0.8rem; line-height:1.4;">Your details have been queued for verification.<br>
+        Expect your <b>Applied ID (A-Series)</b> via email within 24-48 hours.</p>
+      </div>
+
+      <div class="btn-container" style="display: flex; gap: 10px; justify-content: center;">
+        <button onclick="window.location.reload()" style="width:auto; padding:10px 20px; font-size: 0.8rem;">
+            <i class="fas fa-plus-circle"></i> NEW REGISTRATION
+        </button>
+        <button onclick="window.location.href='index.html'" style="width:auto; padding:10px 20px; font-size: 0.8rem; background: transparent; color: var(--gold);">
+            <i class="fas fa-home"></i> HOME
+        </button>
+      </div>
     </div>`;
 }
 
@@ -819,15 +1049,4 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 </script>
 </body>
 </html>
-
-
-	
-
-
-
-
-
-
-
-
 
