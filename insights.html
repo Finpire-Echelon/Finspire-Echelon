@@ -17,6 +17,9 @@
     .insights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
     
     .insight-card { background: var(--card); border-radius: 12px; border: 1px solid #333; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    /* Added a specific class for charts that span wider */
+    .wide-card { grid-column: span 2; }
+    
     .card-title { font-family: 'Cinzel'; color: var(--gold); font-size: 0.85rem; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
     .card-title span { font-size: 0.65rem; opacity: 0.7; font-family: 'Montserrat'; }
 
@@ -37,6 +40,9 @@
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* Mobile Adjustments */
+    @media (max-width: 800px) {
+      .wide-card { grid-column: span 1; }
+    }
     @media (max-width: 600px) {
       .insights-grid { grid-template-columns: 1fr; }
       .insight-card { padding: 15px; }
@@ -60,9 +66,22 @@
   <div class="container">
     <div class="insights-grid">
       
-      <div class="insight-card" style="grid-column: span 1;">
+      <div class="insight-card" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+        <div class="card-title" style="width: 100%; border-bottom: none; justify-content: center;">Total Approved Footfall</div>
+        <div id="totalFootfall" style="font-size: 4rem; font-family: 'Cinzel'; color: var(--green); text-shadow: 0 0 15px rgba(40,167,69,0.3); line-height: 1;">0</div>
+        <div style="font-size: 0.8rem; opacity: 0.7; margin-top: 10px;">Individual Participants Secured</div>
+      </div>
+
+      <div class="insight-card">
         <div class="card-title">Event Pipeline <span>Applied vs Confirmed</span></div>
         <div id="conversionContainer"></div>
+      </div>
+
+      <div class="insight-card wide-card">
+        <div class="card-title">Institution Footfall Rank <span>By Approved Participants</span></div>
+        <div class="chart-container">
+          <canvas id="collegeFootfallBarChart"></canvas>
+        </div>
       </div>
 
       <div class="insight-card">
@@ -80,7 +99,7 @@
       </div>
 
       <div class="insight-card">
-        <div class="card-title">Top Institutions <span>Leaderboard</span></div>
+        <div class="card-title">Top Institutions <span>By Teams Applied</span></div>
         <div class="chart-container">
           <canvas id="collegePieChart"></canvas>
         </div>
@@ -93,7 +112,6 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz5H8BIL_jxlhWYu8o6EG1rJpPn6BgiLlLntm--8cGLI9JtSP7w0dr8WvswvjLD1oPN/exec";
     
     // AUTHENTICATION CHECK
-    // This looks for the adminId stored during the admin.html login session
     const activeAdminId = sessionStorage.getItem('echelonAdminId');
 
     window.onload = async function() {
@@ -128,48 +146,95 @@
     }
 
    function processInsights(rows) {
-      const eventStats = {}, velocity = {}, colleges = {}, dayStats = { "March 10": 0, "March 11": 0 };
+      const eventStats = {}, velocity = {}, collegesTeamCount = {}, dayStats = { "March 10": 0, "March 11": 0 };
+      
+      // NEW VARIABLES FOR FOOTFALL
+      let totalApprovedFootfall = 0;
+      const collegeFootfall = {};
 
       // Skip header row
       for (let i = 1; i < rows.length; i++) {
         const r = rows[i];
         if (!r[0] || !r[3]) continue; 
 
-        // 1. Clean the Event Day (Column C)
         const dayRaw = String(r[2] || "").replace(/'/g, "").trim();
         const event = r[3];
         const status = String(r[13] || "PENDING").toUpperCase();
+        const college = (r[5] || "Other").trim();
         
-        // 2. Clean the Registration Date (Column A) for Velocity
-        // Handles "DD/MM/YYYY HH:MM:SS" or Date objects
         let subDate = "Unknown";
         if (r[0]) {
             const datePart = String(r[0]).split(',')[0].split(' ')[0];
             subDate = datePart;
         }
 
-        const college = (r[5] || "Other").trim();
+        // PARSE PARTICIPANTS TO GET EXACT MEMBER COUNT
+        let participantCount = 1;
+        try {
+            const parsedArray = JSON.parse(r[8]); // Column I contains the JSON string of participants
+            if (Array.isArray(parsedArray)) {
+                participantCount = parsedArray.length;
+            }
+        } catch(e) {
+            // Fallback to 1 if parsing fails
+            participantCount = 1;
+        }
 
         // 1. Funnel Logic
         if(!eventStats[event]) eventStats[event] = { applied: 0, confirmed: 0 };
         eventStats[event].applied++;
-        if(status === "APPROVED") eventStats[event].confirmed++;
+        if(status === "APPROVED") {
+            eventStats[event].confirmed++;
+            
+            // ADD TO FOOTFALL COUNTS ONLY IF APPROVED
+            totalApprovedFootfall += participantCount;
+            collegeFootfall[college] = (collegeFootfall[college] || 0) + participantCount;
+        }
 
         // 2. Day Split Logic
         if(dayRaw.includes("10")) dayStats["March 10"]++;
         else if(dayRaw.includes("11")) dayStats["March 11"]++;
 
-        // 3. Velocity & Colleges
+        // 3. Velocity & Team-based Colleges
         velocity[subDate] = (velocity[subDate] || 0) + 1;
-        colleges[college] = (colleges[college] || 0) + 1;
+        collegesTeamCount[college] = (collegesTeamCount[college] || 0) + 1;
       }
 
+      // Render all charts
+      document.getElementById('totalFootfall').innerText = totalApprovedFootfall; // Render Big Number
+      renderCollegeFootfall(collegeFootfall); // Render New Bar Chart
       renderFunnel(eventStats);
       renderVelocity(velocity);
-      renderColleges(colleges);
+      renderColleges(collegesTeamCount);
       renderDaySplit(dayStats);
     }
 
+    // NEW FUNCTION: Bar chart for Participant footfall by college
+    function renderCollegeFootfall(data) {
+        // Sort by most participants first, take top 8
+        const sorted = Object.entries(data).sort((a,b) => b[1]-a[1]).slice(0, 8);
+        
+        new Chart(document.getElementById('collegeFootfallBarChart'), {
+            type: 'bar',
+            data: {
+                labels: sorted.map(s => s[0].length > 15 ? s[0].substring(0,15)+'..' : s[0]),
+                datasets: [{
+                    label: 'Approved Participants',
+                    data: sorted.map(s => s[1]),
+                    backgroundColor: '#D4AF37', // Gold color
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#888', font: {size: 10} } },
+                    y: { grid: { color: '#222' }, ticks: { stepSize: 1, color: '#888' } }
+                }
+            }
+        });
+    }
 
     function renderDaySplit(data) {
       new Chart(document.getElementById('dayPieChart'), {
@@ -191,7 +256,7 @@
       const sorted = Object.entries(stats).sort((a,b) => b[1].applied - a[1].applied);
       
       container.innerHTML = sorted.map(([name, data]) => {
-        const confPct = (data.confirmed / data.applied) * 100;
+        const confPct = (data.confirmed / data.applied) * 100 || 0;
         return `
           <div class="conversion-item">
             <div class="label-row"><strong>${name}</strong><span>${data.confirmed}C / ${data.applied}A</span></div>
@@ -204,7 +269,6 @@
     }
 
     function renderVelocity(data) {
-      // Sort dates chronologically so the line doesn't zig-zag
       const labels = Object.keys(data).sort((a, b) => {
           return new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-'));
       });
@@ -235,8 +299,6 @@
       });
     }
 
-
-    // UPDATED: Better Mobile Legend for Colleges
     function renderColleges(data) {
       const sorted = Object.entries(data).sort((a,b) => b[1]-a[1]).slice(0, 5);
       new Chart(document.getElementById('collegePieChart'), {
@@ -265,7 +327,3 @@
   </script>
 </body>
 </html>
-
-
-
-
