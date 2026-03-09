@@ -564,41 +564,64 @@
 
     // SMART EXCEL EXPORT (Parsed Arrays)
     function downloadExcel(eventName = null) {
-        let maxP = 1;
-        let exportRows = [];
+    let exportRows = [];
 
-        fullData.slice(1).forEach(r => {
-            if(eventName && r[3] !== eventName) return;
-            let pList = [];
-            try { pList = JSON.parse(r[8]); } catch(e) { pList = [{name: r[8]||'', phone: r[9]||''}]; }
-            if(pList.length > maxP) maxP = pList.length;
-            exportRows.push({ raw: r, members: pList });
-        });
+    // Filter data based on event (if from drilldown)
+    fullData.slice(1).forEach(r => {
+        if(eventName && r[3] !== eventName) return;
+        
+        let pList = [];
+        try { 
+            pList = JSON.parse(r[8]); 
+        } catch(e) { 
+            // Fallback if JSON is malformed
+            pList = [{name: r[8] || 'Unknown', phone: r[9] || 'N/A'}]; 
+        }
+        
+        const regId = r[4];
+        const institution = r[5];
 
-        if(exportRows.length === 0) { alert("No data to export."); return; }
-
-        let headers = ["Timestamp", "Processed Time", "Reg ID", "Event", "Institution", "Department", "Email", "Status"];
-        for(let i=1; i<=maxP; i++) { headers.push(`P${i} Name`, `P${i} Phone`); }
-
-        let csv = headers.join(",") + "\n";
-        exportRows.forEach(obj => {
-            let row = [
-                `"${obj.raw[0]}"`, `"${obj.raw[14]||''}"`, `"${obj.raw[4]}"`, `"${obj.raw[3]}"`, 
-                `"${obj.raw[5]}"`, `"${obj.raw[6]}"`, `"${obj.raw[7]}"`, `"${obj.raw[13]||'PENDING'}"`
-            ];
-            for(let i=0; i<maxP; i++) {
-                if(obj.members[i]) { row.push(`"${obj.members[i].name}"`, `"${obj.members[i].phone}"`); } 
-                else { row.push('""', '""'); }
+        // Create a row for each participant in the team
+        pList.forEach((member, index) => {
+            let row = [];
+            if (index === 0) {
+                // First member row: Include Reg ID and Institution
+                row = [
+                    `"${regId}"`, 
+                    `"${member.name}"`, 
+                    `"${member.phone}"`, 
+                    `"${institution}"`
+                ];
+            } else {
+                // Subsequent member rows: Leave Reg ID and Institution empty
+                row = [
+                    '""', 
+                    `"${member.name}"`, 
+                    `"${member.phone}"`, 
+                    '""'
+                ];
             }
-            csv += row.join(",") + "\n";
+            exportRows.push(row.join(","));
         });
+    });
 
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `ECHELON26_${eventName ? eventName.replace(/\s+/g,'_') : 'MASTER'}.csv`;
-        link.click();
+    if(exportRows.length === 0) { 
+        alert("No data to export."); 
+        return; 
     }
+
+    // Define the specific headers you requested
+    const headers = ["Registration ID", "Participants", "Participant Mobile Number", "Institution"];
+    let csv = headers.join(",") + "\n" + exportRows.join("\n");
+
+    // Download Logic
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    const filename = eventName ? `ECHELON26_${eventName.replace(/\s+/g,'_')}.csv` : 'ECHELON26_MASTER.csv';
+    link.download = filename;
+    link.click();
+}
 
     // TABLE FILTERING LOGIC
     function toggleFilter(th, colIdx) {
@@ -682,6 +705,7 @@
   </script>
 </body>
 </html>
+
 
 
 
