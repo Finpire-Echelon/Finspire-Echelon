@@ -566,26 +566,29 @@
     function downloadExcel(eventName = null) {
     let exportRows = [];
 
-    // Filter data based on event (if from drilldown)
     fullData.slice(1).forEach(r => {
-        if(eventName && r[3] !== eventName) return;
+        // 1. FILTER: Only process "APPROVED" records
+        const status = String(r[13] || "PENDING").toUpperCase();
+        if (status !== "APPROVED") return;
+
+        // 2. FILTER: If eventName is provided (from drilldown), check it
+        if (eventName && r[3] !== eventName) return;
         
         let pList = [];
         try { 
             pList = JSON.parse(r[8]); 
         } catch(e) { 
-            // Fallback if JSON is malformed
             pList = [{name: r[8] || 'Unknown', phone: r[9] || 'N/A'}]; 
         }
         
         const regId = r[4];
         const institution = r[5];
 
-        // Create a row for each participant in the team
+        // Create the staggered rows
         pList.forEach((member, index) => {
             let row = [];
             if (index === 0) {
-                // First member row: Include Reg ID and Institution
+                // Main row for the team
                 row = [
                     `"${regId}"`, 
                     `"${member.name}"`, 
@@ -593,7 +596,7 @@
                     `"${institution}"`
                 ];
             } else {
-                // Subsequent member rows: Leave Reg ID and Institution empty
+                // Sub-rows for additional members
                 row = [
                     '""', 
                     `"${member.name}"`, 
@@ -606,23 +609,20 @@
     });
 
     if(exportRows.length === 0) { 
-        alert("No data to export."); 
+        alert("No APPROVED data found to export."); 
         return; 
     }
 
-    // Define the specific headers you requested
     const headers = ["Registration ID", "Participants", "Participant Mobile Number", "Institution"];
     let csv = headers.join(",") + "\n" + exportRows.join("\n");
 
-    // Download Logic
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    const filename = eventName ? `ECHELON26_${eventName.replace(/\s+/g,'_')}.csv` : 'ECHELON26_MASTER.csv';
+    const filename = eventName ? `ECHELON26_APPROVED_${eventName.replace(/\s+/g,'_')}.csv` : 'ECHELON26_MASTER_APPROVED.csv';
     link.download = filename;
     link.click();
 }
-
     // TABLE FILTERING LOGIC
     function toggleFilter(th, colIdx) {
         const box = document.getElementById('filter-dropdown');
@@ -705,6 +705,7 @@
   </script>
 </body>
 </html>
+
 
 
 
