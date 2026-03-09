@@ -376,9 +376,7 @@ button:disabled { opacity: 0.5; cursor: wait; }
 
     <div class="modal-section-title"><i class="fas fa-users"></i> TEAM COMPOSITION</div>
     <ul class="modal-list">
-      <li><
-			  
-		  >Biz Auction:</strong> Minimum 2 - Maximum 4 (Full Team).</li>
+      <li><strong>Biz Auction:</strong> Minimum 2 - Maximum 4 (Full Team).</li>
       <li><strong>Identity Unleashed:</strong> Solo Participation (Individual).</li>
       <li><strong>Other Events:</strong> Minimum 1 Participant required.</li>
     </ul>
@@ -396,12 +394,8 @@ button:disabled { opacity: 0.5; cursor: wait; }
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwnIPGRQkRqgqu1XKWyCt4-huetQiLGltrszFnjtGNAOHpWMedqYFzXWCcdxYD8memC/exec";
-// --- REGISTRATION DEADLINE LOGIC ---
-const now = new Date();
-// Set deadline: March 9, 2026, at 23:00 (11:00 PM)
-const march10Deadline = new Date(2026, 2, 9, 23, 0, 0); 
-const isMarch10Closed = now >= march10Deadline;
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwIsB5zCcYOLQKtLjTR8Ymu9NGmNWJVwfA40IUWOys0vIEk2R8th787Gh_lw3SamRAI/exec";
+
 const EVENT_CONFIG = {
   "March 10": { "Make or Break": { capacity: 35 }, "Quizpreneur": { capacity: 50 }, "Behind the Brand": { capacity: 20 } },
   "March 11": { "Biz Auction": { capacity: 15 }, "Decision Table": { capacity: 30 }, "Identity Unleashed": { capacity: 100 } }
@@ -481,56 +475,43 @@ function buildEventOptions(liveData) {
       <h3 style="color:var(--gold); font-family:'Cinzel'; margin: 15px 0 10px; font-size: 0.9rem;">${date}</h3>
     `;
 
-   eventData[date].forEach(ev => {
-  const stats = liveData?.[date]?.[ev.name];
-  const capacity = EVENT_CONFIG[date][ev.name].capacity;
-  const approved = stats ? stats.approved : 0;
-  const left = capacity - approved;
-  
-  // NEW: Check if it's March 10 and if the deadline has passed
-  const isExpired = (date === "March 10" && isMarch10Closed);
-  const isFull = left <= 0;
-  const isDisabled = false;
+    eventData[date].forEach(ev => {
+      const stats = liveData?.[date]?.[ev.name];
+      const left = EVENT_CONFIG[date][ev.name].capacity - (stats ? stats.approved : 0);
+      const isFull = left <= 0;
 
-  const isSelected = Array.isArray(selectedEvents[date]) && 
-                     selectedEvents[date].some(item => item.name === ev.name);
+      // 2. RECTIFIED: Correctly check if event exists in the new ARRAY structure
+      const isSelected = Array.isArray(selectedEvents[date]) && 
+                         selectedEvents[date].some(item => item.name === ev.name);
 
-  const card = document.createElement('div');
-  card.className = `option ${isDisabled ? 'disabled' : ''} ${isSelected ? 'selected' : ''}`;
+      const card = document.createElement('div');
+      // Add 'selected' class immediately if it was already picked (for step navigation)
+      card.className = `option ${isFull ? 'disabled' : ''} ${isSelected ? 'selected' : ''}`;
 
-// UI Message logic
-  let statusHTML = "";
-  if (isExpired) {
-    statusHTML = '<span style="color:var(--error); font-weight:bold;">REGISTRATIONS CLOSED</span>';
-  } else if (isFull) {
-    statusHTML = '<span style="color:var(--error); font-weight:bold;">FULL</span>';
-  } else {
-    statusHTML = `<span class="event-meta" style="color:var(--gold)">Slots Available: ${left}</span>`;
-  }
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+          <div style="flex:1; font-size:0.85rem;">
+            <strong>${ev.name}</strong><br>
+            <span class="event-meta" style="font-size: 0.75rem; opacity: 0.8;">${ev.sizeRule}</span>
+            <div style="margin-top:5px;">
+              ${isFull ? 
+                '<span style="color:var(--error); font-weight:bold;">FULL</span>' : 
+                `<span class="event-meta" style="color:var(--gold)">Slots Available: ${left}</span>`
+              }
+            </div>
+          </div>
+          <div class="selection-indicator" style="margin-left:10px;">
+            ${isSelected ? '<i class="fas fa-check-circle" style="color:var(--maroon); font-size:1.2rem;"></i>' : ''}
+          </div>
+        </div>`;
 
-  	
+      if (!isFull) {
+        card.onclick = () => selectEvent(date, ev, card);
+      }
 
-   card.innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-      <div style="flex:1; font-size:0.85rem;">
-        <strong>${ev.name}</strong><br>
-        <span class="event-meta" style="font-size: 0.75rem; opacity: 0.8;">${ev.sizeRule}</span>
-        <div style="margin-top:5px;">
-          ${statusHTML}
-        </div>
-      </div>
-      <div class="selection-indicator" style="margin-left:10px;">
-        ${isSelected ? '<i class="fas fa-check-circle" style="color:var(--maroon); font-size:1.2rem;"></i>' : ''}
-      </div>
-    </div>`;
-
-      // Only allow click if NOT full and NOT expired
-  if (!isDisabled) {
-    card.onclick = () => selectEvent(date, ev, card);
-  }
-
-  container.appendChild(card);
-});
+      container.appendChild(card);
+    });
+  });
 }
 
 function goToDetails() {
@@ -1068,10 +1049,6 @@ function closeHelp(){ document.getElementById("helpModal").style.display = "none
 </script>
 </body>
 </html>
-
-
-
-
 
 
 
